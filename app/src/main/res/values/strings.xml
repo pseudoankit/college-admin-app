@@ -6,4 +6,5 @@
     <string name="upload_ebook">Upload Ebook</string>
     <string name="update_faculty">Update Faculty</string>
     <string name="delete_notice">Delete Notice</string>
+    <string name="error_required">"Required "</string>
 </resources>

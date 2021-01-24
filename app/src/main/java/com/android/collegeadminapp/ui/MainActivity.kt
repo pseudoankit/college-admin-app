@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityMainBinding
+import com.android.collegeadminapp.ui.notice.UploadNoticeActivity
 
 class MainActivity : AppCompatActivity() {
 
