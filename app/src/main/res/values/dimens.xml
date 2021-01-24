@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="d_400">400dp</dimen>
+
+    <dimen name="margin_15">15dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_5">5dp</dimen>
+
+    <dimen name="layout_d_64">64dp</dimen>
+    <dimen name="layout_width_130">130dp</dimen>
+    <dimen name="layout_height_150">150dp</dimen>
+</resources>
