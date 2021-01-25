@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.UploadImageActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <LinearLayout
-            android:id="@+id/linear_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:orientation="vertical" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -38,7 +33,7 @@
                         <ImageView
                             android:layout_width="@dimen/layout_d_64"
                             android:layout_height="@dimen/layout_d_64"
-                            android:background="@drawable/circle_purple"
+                            android:background="@drawable/circle_yellow"
                             android:padding="@dimen/margin_15"
                             android:src="@drawable/ic_add_image" />
 
@@ -59,24 +54,21 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <Spinner
+                    android:id="@+id/spinner_image_category"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/margin_15">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etNoticeTitle"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="@dimen/margin_15"
+                    android:background="@android:drawable/btn_dropdown"
+                    android:gravity="center"
+                    android:spinnerMode="dropdown" />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnUploadNotice"
+                    android:id="@+id/btnUploadImage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_15"
-                    android:text="@string/upload_notice"
+                    android:text="@string/upload_image"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.card.MaterialCardView
@@ -85,12 +77,19 @@
                     android:layout_marginTop="@dimen/margin_15">
 
                     <ImageView
-                        android:id="@+id/ivSelectedNotice"
+                        android:id="@+id/ivGallery"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop" />
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/root_layout"
+            android:layout_centerInParent="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
     </RelativeLayout>
 </layout>

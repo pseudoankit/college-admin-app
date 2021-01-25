@@ -7,4 +7,13 @@
     <string name="update_faculty">Update Faculty</string>
     <string name="delete_notice">Delete Notice</string>
     <string name="error_required">"Required "</string>
+    <string name="select_category">Select Category</string>
+    <string name="convocation">Convocation</string>
+    <string name="republic_day">Republic Day</string>
+
+    <string-array name="image_categories">
+        <item >@string/select_category</item>
+        <item>@string/convocation</item>
+        <item>@string/republic_day</item>
+    </string-array>
 </resources>

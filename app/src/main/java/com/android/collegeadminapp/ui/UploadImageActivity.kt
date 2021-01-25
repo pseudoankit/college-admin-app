@@ -1,14 +1,16 @@
-package com.android.collegeadminapp.ui.notice
+package com.android.collegeadminapp.ui
 
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.android.collegeadminapp.R
-import com.android.collegeadminapp.databinding.ActivityUploadNoticeBinding
+import com.android.collegeadminapp.databinding.ActivityUploadImageBinding
 import com.android.collegeadminapp.util.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -17,35 +19,39 @@ import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
-class UploadNoticeActivity : AppCompatActivity() {
+class UploadImageActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityUploadNoticeBinding
-    private lateinit var databaseReference: DatabaseReference       //Real time database reference
-    private lateinit var storageReference: StorageReference        //storage reference
-    private lateinit var downloadUrl: String
+    private lateinit var binding: ActivityUploadImageBinding
+    private lateinit var category: String
     private lateinit var progressBar: ProgressBar
+    private lateinit var databaseReference: DatabaseReference       //Real time database reference
+    private lateinit var storageReference: StorageReference
+    private lateinit var downloadUrl: String
     private var bitmap: Bitmap? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_upload_notice)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_upload_image)
 
         init()
 
+        setSpinner()
+
         binding.layoutSelectImage.setOnClickListener { openGallery() }
 
-        binding.btnUploadNotice.setOnClickListener { buttonUploadNotice() }
+        binding.btnUploadImage.setOnClickListener { buttonUploadImage() }
 
     }
 
-    private fun buttonUploadNotice() {
+
+    private fun buttonUploadImage() {
         when {
-            binding.etNoticeTitle.text.isNullOrEmpty() -> {
-                binding.etNoticeTitle.error = getString(R.string.error_required)
-                binding.etNoticeTitle.requestFocus()
-            }
             bitmap == null -> {
-                uploadNotice()
+                toast("Please Select an image")
+            }
+            category == getString(R.string.select_category) -> {
+                toast("Please Select Image Category")
             }
             else -> {
                 progressBar.show()
@@ -66,7 +72,7 @@ class UploadNoticeActivity : AppCompatActivity() {
                 uploadTask.addOnSuccessListener {
                     filePath.downloadUrl.addOnSuccessListener { uri ->
                         downloadUrl = uri.toString()
-                        uploadNotice()
+                        uploadImage()
                     }
                 }
             } else {
@@ -76,22 +82,16 @@ class UploadNoticeActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadNotice() {
-        //if title is generated successfully then uploading to firebase db and storage
-        val uniqueKey = databaseReference.push().key
-        val date = getCurrentDate()
-        val time = getCurrentTime()
-        val title = binding.etNoticeTitle.text!!.trim().toString()
-
-        val noticeData = Notice(title, downloadUrl, date, time, uniqueKey!!)
-
-        databaseReference.child(uniqueKey).setValue(noticeData)
+    private fun uploadImage() {
+        val dbReference = databaseReference.child(category)
+        val uniqueKey = dbReference.push().key
+        dbReference.child(uniqueKey!!).setValue(downloadUrl)
             .addOnSuccessListener {
                 progressBar.hide()
-                toast("Notice Uploaded Successfully")
+                toast("Image Uploaded Successfully")
             }.addOnFailureListener {
                 progressBar.hide()
-                toast("Error${it.toString()}")
+                toast("error ${it.toString()}")
             }
     }
 
@@ -110,17 +110,41 @@ class UploadNoticeActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-            binding.ivSelectedNotice.setImageBitmap(bitmap!!)
+            binding.ivGallery.setImageBitmap(bitmap!!)
+        }
+    }
+
+    private fun setSpinner() {
+        val categories = resources.getStringArray(R.array.image_categories)
+        this.spinner(
+            categories,
+            binding.spinnerImageCategory
+        ).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                category = categories[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
         }
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child("Notice")
-        storageReference = FirebaseStorage.getInstance().reference.child("Notice")
-        progressBar = this.progressBar(binding.linearLayout)
+        databaseReference = FirebaseDatabase.getInstance().reference.child("Gallery")
+        storageReference = FirebaseStorage.getInstance().reference.child("Gallery")
+        progressBar = this.progressBar(binding.rootLayout)
     }
 
     companion object {
         private const val REQ_CODE = 1
+
     }
+
 }

@@ -19,5 +19,9 @@ class MainActivity : AppCompatActivity() {
         binding.layoutUploadNotice.setOnClickListener {
             startActivity(Intent(this, UploadNoticeActivity::class.java))
         }
+
+        binding.layoutUploadImage.setOnClickListener {
+            startActivity(Intent(this, UploadImageActivity::class.java))
+        }
     }
 }
