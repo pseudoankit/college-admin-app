@@ -1,18 +1,20 @@
 <resources>
     <string name="app_name">CollegeAdminApp</string>
     <string name="select_image">Select Image</string>
+    <string name="select_pdf">Select Pdf</string>
     <string name="upload_notice">Upload Notice</string>
     <string name="upload_image">Upload Image</string>
-    <string name="upload_ebook">Upload Ebook</string>
+    <string name="upload_pdf">Upload Pdf</string>
     <string name="update_faculty">Update Faculty</string>
     <string name="delete_notice">Delete Notice</string>
     <string name="error_required">"Required "</string>
     <string name="select_category">Select Category</string>
     <string name="convocation">Convocation</string>
     <string name="republic_day">Republic Day</string>
+    <string name="no_pdf_selected">No Pdf Selected</string>
 
     <string-array name="image_categories">
-        <item >@string/select_category</item>
+        <item>@string/select_category</item>
         <item>@string/convocation</item>
         <item>@string/republic_day</item>
     </string-array>

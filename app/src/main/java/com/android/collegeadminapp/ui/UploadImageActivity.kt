@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityUploadImageBinding
 import com.android.collegeadminapp.util.*
@@ -16,6 +17,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -55,12 +59,12 @@ class UploadImageActivity : AppCompatActivity() {
             }
             else -> {
                 progressBar.show()
-                convertBitmapAndUpload()
+                lifecycleScope.launch { convertBitmapAndUpload() }
             }
         }
     }
 
-    private fun convertBitmapAndUpload() {
+    private suspend fun convertBitmapAndUpload() {
         //upload image to firebase if all ok,converting bitmap to upload task to upload to firebase
         val bos: ByteArrayOutputStream = ByteArrayOutputStream()
         bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
@@ -72,7 +76,8 @@ class UploadImageActivity : AppCompatActivity() {
                 uploadTask.addOnSuccessListener {
                     filePath.downloadUrl.addOnSuccessListener { uri ->
                         downloadUrl = uri.toString()
-                        uploadImage()
+
+                        Coroutines.io { uploadImage() }
                     }
                 }
             } else {
@@ -82,7 +87,7 @@ class UploadImageActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadImage() {
+    private suspend fun uploadImage() {
         val dbReference = databaseReference.child(category)
         val uniqueKey = dbReference.push().key
         dbReference.child(uniqueKey!!).setValue(downloadUrl)

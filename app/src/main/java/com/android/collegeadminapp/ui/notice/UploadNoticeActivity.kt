@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityUploadNoticeBinding
 import com.android.collegeadminapp.util.*
@@ -14,6 +15,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 
@@ -45,16 +47,16 @@ class UploadNoticeActivity : AppCompatActivity() {
                 binding.etNoticeTitle.requestFocus()
             }
             bitmap == null -> {
-                uploadNotice()
+                lifecycleScope.launch { uploadNotice() }
             }
             else -> {
                 progressBar.show()
-                convertBitmapAndUpload()
+                lifecycleScope.launch { convertBitmapAndUpload() }
             }
         }
     }
 
-    private fun convertBitmapAndUpload() {
+    private suspend fun convertBitmapAndUpload() {
         //upload image to firebase if all ok,converting bitmap to upload task to upload to firebase
         val bos: ByteArrayOutputStream = ByteArrayOutputStream()
         bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
@@ -66,7 +68,7 @@ class UploadNoticeActivity : AppCompatActivity() {
                 uploadTask.addOnSuccessListener {
                     filePath.downloadUrl.addOnSuccessListener { uri ->
                         downloadUrl = uri.toString()
-                        uploadNotice()
+                        Coroutines.io { uploadNotice() }
                     }
                 }
             } else {
@@ -76,7 +78,7 @@ class UploadNoticeActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadNotice() {
+    private suspend fun uploadNotice() {
         //if title is generated successfully then uploading to firebase db and storage
         val uniqueKey = databaseReference.push().key
         val date = getCurrentDate()

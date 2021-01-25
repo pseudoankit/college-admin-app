@@ -96,7 +96,7 @@
             android:orientation="horizontal">
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/layoutUploadEBook"
+                android:id="@+id/layoutUploadPdf"
                 android:layout_width="@dimen/layout_width_130"
                 android:layout_height="@dimen/layout_height_150"
                 android:layout_margin="@dimen/margin_10">
@@ -125,7 +125,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_10"
                         android:padding="@dimen/margin_5"
-                        android:text="@string/upload_ebook"
+                        android:text="@string/upload_pdf"
                         android:textColor="@color/textColor"
                         android:textStyle="bold" />
                 </LinearLayout>

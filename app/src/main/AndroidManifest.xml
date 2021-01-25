@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CollegeAdminApp">
-        <activity android:name=".ui.UploadImageActivity"/>
+        <activity android:name=".ui.UploadPdfActivity"></activity>
+        <activity android:name=".ui.UploadImageActivity" />
         <activity android:name=".ui.notice.UploadNoticeActivity" />
         <activity android:name=".ui.MainActivity">
             <intent-filter>

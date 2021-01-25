@@ -23,5 +23,9 @@ class MainActivity : AppCompatActivity() {
         binding.layoutUploadImage.setOnClickListener {
             startActivity(Intent(this, UploadImageActivity::class.java))
         }
+
+        binding.layoutUploadPdf.setOnClickListener {
+            startActivity(Intent(this, UploadPdfActivity::class.java))
+        }
     }
 }

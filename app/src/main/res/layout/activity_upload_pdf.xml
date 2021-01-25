@@ -16,7 +16,7 @@
                 android:orientation="vertical">
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/layoutSelectImage"
+                    android:id="@+id/layoutSelectPdf"
                     android:layout_width="@dimen/layout_width_130"
                     android:layout_height="@dimen/layout_height_150"
                     android:layout_gravity="center"
@@ -31,9 +31,9 @@
                         <ImageView
                             android:layout_width="@dimen/layout_d_64"
                             android:layout_height="@dimen/layout_d_64"
-                            android:background="@drawable/circle_purple"
+                            android:background="@drawable/circle_yellow"
                             android:padding="@dimen/margin_15"
-                            android:src="@drawable/ic_add_image" />
+                            android:src="@drawable/ic_pdf" />
 
                         <View
                             android:layout_width="match_parent"
@@ -46,11 +46,20 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/margin_10"
                             android:padding="@dimen/margin_5"
-                            android:text="@string/select_image"
+                            android:text="@string/select_pdf"
                             android:textColor="@color/textColor"
                             android:textStyle="bold" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/tvSelectedPdf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/no_pdf_selected"
+                    android:layout_marginTop="@dimen/margin_5"
+                    android:textSize="@dimen/text_17" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -59,30 +68,19 @@
                     android:layout_marginTop="@dimen/margin_15">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etNoticeTitle"
+                        android:id="@+id/etPdfTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnUploadNotice"
+                    android:id="@+id/btnUploadPdf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_15"
                     android:text="@string/upload_notice"
                     android:textAllCaps="false" />
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/d_400"
-                    android:layout_marginTop="@dimen/margin_15">
-
-                    <ImageView
-                        android:id="@+id/ivSelectedNotice"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop" />
-                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </ScrollView>
 
