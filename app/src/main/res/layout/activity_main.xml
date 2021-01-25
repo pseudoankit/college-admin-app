@@ -28,8 +28,8 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="@dimen/layout_d_64"
-                        android:layout_height="@dimen/layout_d_64"
+                        android:layout_width="@dimen/layout_64"
+                        android:layout_height="@dimen/layout_64"
                         android:background="@drawable/circle_green"
                         android:padding="@dimen/margin_15"
                         android:src="@drawable/ic_notice" />
@@ -64,8 +64,8 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="@dimen/layout_d_64"
-                        android:layout_height="@dimen/layout_d_64"
+                        android:layout_width="@dimen/layout_64"
+                        android:layout_height="@dimen/layout_64"
                         android:background="@drawable/circle_purple"
                         android:padding="@dimen/margin_15"
                         android:src="@drawable/ic_gallery" />
@@ -108,8 +108,8 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="@dimen/layout_d_64"
-                        android:layout_height="@dimen/layout_d_64"
+                        android:layout_width="@dimen/layout_64"
+                        android:layout_height="@dimen/layout_64"
                         android:background="@drawable/circle_pink"
                         android:padding="@dimen/margin_15"
                         android:src="@drawable/ic_upload" />
@@ -132,7 +132,7 @@
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/layoutUploadFaculty"
+                android:id="@+id/layoutUpdateFaculty"
                 android:layout_width="@dimen/layout_width_130"
                 android:layout_height="@dimen/layout_height_150"
                 android:layout_margin="@dimen/margin_10">
@@ -144,8 +144,8 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="@dimen/layout_d_64"
-                        android:layout_height="@dimen/layout_d_64"
+                        android:layout_width="@dimen/layout_64"
+                        android:layout_height="@dimen/layout_64"
                         android:background="@drawable/circle_yellow"
                         android:padding="@dimen/margin_15"
                         android:src="@drawable/ic_group" />
@@ -188,8 +188,8 @@
                     android:orientation="vertical">
 
                     <ImageView
-                        android:layout_width="@dimen/layout_d_64"
-                        android:layout_height="@dimen/layout_d_64"
+                        android:layout_width="@dimen/layout_64"
+                        android:layout_height="@dimen/layout_64"
                         android:background="@drawable/circle_red"
                         android:padding="@dimen/margin_15"
                         android:src="@drawable/ic_delete" />

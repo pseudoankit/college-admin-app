@@ -47,6 +47,7 @@ class UploadNoticeActivity : AppCompatActivity() {
                 binding.etNoticeTitle.requestFocus()
             }
             bitmap == null -> {
+                downloadUrl = ""
                 lifecycleScope.launch { uploadNotice() }
             }
             else -> {

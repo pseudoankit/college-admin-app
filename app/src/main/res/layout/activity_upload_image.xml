@@ -31,8 +31,8 @@
                         android:orientation="vertical">
 
                         <ImageView
-                            android:layout_width="@dimen/layout_d_64"
-                            android:layout_height="@dimen/layout_d_64"
+                            android:layout_width="@dimen/layout_64"
+                            android:layout_height="@dimen/layout_64"
                             android:background="@drawable/circle_yellow"
                             android:padding="@dimen/margin_15"
                             android:src="@drawable/ic_add_image" />
@@ -73,7 +73,7 @@
 
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/d_400"
+                    android:layout_height="@dimen/dimen_400"
                     android:layout_marginTop="@dimen/margin_15">
 
                     <ImageView
@@ -86,7 +86,7 @@
         </ScrollView>
 
         <LinearLayout
-            android:id="@+id/root_layout"
+            android:id="@+id/linear_layout"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
