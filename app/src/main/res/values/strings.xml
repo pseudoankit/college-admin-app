@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">CollegeAdminApp</string>
+    <string name="app_name">Admin App</string>
     <string name="select_image">Select Image</string>
-    <string name="select_pdf">Select Pdf</string>
+    <string name="select_pdf">Select Pdf File</string>
     <string name="upload_notice">Upload Notice</string>
     <string name="upload_image">Upload Image</string>
     <string name="upload_pdf">Upload Pdf</string>
@@ -17,6 +17,18 @@
     <string name="mechanical">Mechanical</string>
     <string name="agriculture">Agriculture</string>
     <string name="ece">Electronics</string>
+    <string name="no_data_found">No data found</string>
+    <string name="update_info">Update Info</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="post">Post</string>
+    <string name="please_select_pdf">Please Select a pdf</string>
+    <string name="uploaded_successfully">Uploaded Successfully</string>
+    <string name="failed_to_upload">Failed to upload</string>
+    <string name="please_select_image">Please Select an image</string>
+    <string name="please_select_image_category">Please Select Image Category</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="faculty_updated_successfully">Faculty Updated Successfully</string>
 
     <string-array name="image_categories">
         <item>@string/select_category</item>
@@ -27,9 +39,7 @@
     <string-array name="streams">
         <item>@string/select_category</item>
         <item>@string/cse</item>
-        <item>@string/civil</item>
         <item>@string/mechanical</item>
         <item>@string/ece</item>
-        <item>@string/agriculture</item>
     </string-array>
 </resources>

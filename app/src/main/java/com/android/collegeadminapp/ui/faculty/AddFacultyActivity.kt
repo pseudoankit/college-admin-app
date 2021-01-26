@@ -19,7 +19,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 
 class AddFacultyActivity : AppCompatActivity() {
 
@@ -55,19 +54,20 @@ class AddFacultyActivity : AppCompatActivity() {
     }
 
     private suspend fun convertAndUploadData(name: String, email: String, post: String) {
+        //todo simplify
         //upload image to firebase if all ok,converting bitmap to upload task to upload to firebase
         val bos: ByteArrayOutputStream = ByteArrayOutputStream()
         bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
         val finalImage = bos.toByteArray()
-        val filePath = storageReference.child("${finalImage}jpg")
-        val uploadTask = filePath.putBytes(finalImage)
+        val storageFilePath = storageReference.child("${finalImage}jpg")
+        val uploadTask = storageFilePath.putBytes(finalImage)
         uploadTask.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 uploadTask.addOnSuccessListener {
-                    filePath.downloadUrl.addOnSuccessListener { uri ->
+                    storageFilePath.downloadUrl.addOnSuccessListener { uri ->
                         downloadUrl = uri.toString()
 
-                        Coroutines.io { uploadFacultyData(name, email, post) }
+                        Coroutines.io { uploadFacultyToRTDB(name, email, post) }
                     }
                 }
             } else {
@@ -77,17 +77,18 @@ class AddFacultyActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun uploadFacultyData(name: String, email: String, post: String) {
+    private suspend fun uploadFacultyToRTDB(name: String, email: String, post: String) {
         val dbReference = databaseReference.child(category)
         val uniqueKey = dbReference.push().key
         val faculty = Faculty(name,email,post,downloadUrl,uniqueKey!!)
         dbReference.child(uniqueKey).setValue(faculty)
             .addOnSuccessListener {
                 progressBar.hide()
-                toast("Faculty Updated Successfully")
+                toast(getString(R.string.faculty_updated_successfully))
+                finish()
             }.addOnFailureListener {
                 progressBar.hide()
-                toast("error ${it.toString()}")
+                toast(getString(R.string.something_went_wrong))
             }
     }
 
@@ -122,19 +123,14 @@ class AddFacultyActivity : AppCompatActivity() {
 
     private fun openGallery() {
         Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            startActivityForResult(this, REQ_CODE)
+            startActivityForResult(this, GALLERY_REQ_CODE)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_CODE && resultCode == RESULT_OK) {
-            val uri = data!!.data
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+        if (requestCode == GALLERY_REQ_CODE && resultCode == RESULT_OK) {
+            bitmap = getSelectedGalleryBitmap(data!!.data)
             binding.ivFacultyImage.setImageBitmap(bitmap!!)
         }
     }
@@ -155,20 +151,19 @@ class AddFacultyActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
             }
 
         }
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child("Faculty")
-        storageReference = FirebaseStorage.getInstance().reference.child("Faculty")
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_FACULTY)
+        storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_FACULTY)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
-        private const val REQ_CODE = 1
-
+        private const val GALLERY_REQ_CODE = 1
+        const val FB_CHILD_FACULTY = "Faculty"
     }
 }

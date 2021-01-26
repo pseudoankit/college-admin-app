@@ -1,11 +1,8 @@
 package com.android.collegeadminapp.ui
 
 import android.content.Intent
-import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.provider.OpenableColumns
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -17,13 +14,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.IOException
-import java.util.*
 import kotlin.collections.HashMap
 
 class UploadPdfActivity : AppCompatActivity() {
@@ -52,7 +43,7 @@ class UploadPdfActivity : AppCompatActivity() {
         pdfTitle = binding.etPdfTitle.text!!.trim().toString()
         when {
             pdfData == null -> {
-                toast("Please Select a pdf")
+                toast(getString(R.string.please_select_pdf))
             }
             pdfTitle.isEmpty() -> {
                 binding.etPdfTitle.error = getString(R.string.error_required)
@@ -61,41 +52,41 @@ class UploadPdfActivity : AppCompatActivity() {
             else -> {
                 progressBar.show()
                 lifecycleScope.launch { uploadPdf() }
-
             }
         }
     }
 
     private suspend fun uploadPdf() {
+        //uploads pdf to fb storage
         //Todo - listener response coroutines
-        val stReference = storageReference.child("pdf/${pdfName}-${System.currentTimeMillis()}.pdf")
-        stReference.putFile(pdfData!!)
+        val storageFilePath = storageReference.child("${pdfName}-${System.currentTimeMillis()}.pdf")
+        storageFilePath.putFile(pdfData!!)
             .addOnSuccessListener {
                 val uriTask = it.storage.downloadUrl
                 while (!uriTask.isComplete) {
                     continue
                 }
                 val pdfUrl = uriTask.result.toString()
-                Coroutines.io { uploadData(pdfUrl) }
+                Coroutines.io { uploadPdfToRTDB(pdfUrl) }
             }
             .addOnFailureListener {
                 progressBar.hide()
-                toast("Something went wrong")
+                toast(getString(R.string.something_went_wrong))
             }
     }
 
-    private suspend fun uploadData(pdfUrl: String) {
+    private suspend fun uploadPdfToRTDB(pdfUrl: String) {
         val uniqueKey = databaseReference.push().key
         val data: HashMap<String, String> = HashMap()
-        data["pdfTitle"] = pdfTitle
-        data["pdfUrl"] = pdfUrl
+        data[PDF_TITLE_FB] = pdfTitle
+        data[PDF_URL_FB] = pdfUrl
         databaseReference.child(uniqueKey!!).setValue(data)
             .addOnCompleteListener {
                 progressBar.hide()
-                toast("Pdf Uploaded Successfully")
+                toast(getString(R.string.uploaded_successfully))
             }.addOnFailureListener {
                 progressBar.hide()
-                toast("Failed to upload pdf")
+                toast(getString(R.string.failed_to_upload))
             }
     }
 
@@ -103,40 +94,30 @@ class UploadPdfActivity : AppCompatActivity() {
         Intent().apply {
             this.type = "application/pdf"
             this.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(this, "Select pdf file"), REQ_CODE)
+            startActivityForResult(Intent.createChooser(this, getString(R.string.select_pdf)), PDF_REQ_CODE)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_CODE && resultCode == RESULT_OK) {
+        if (requestCode == PDF_REQ_CODE && resultCode == RESULT_OK) {
             pdfData = data!!.data
-            if (pdfData!!.toString().startsWith("content://")) {
-                var cursor: Cursor? = null
-                try {
-                    cursor = this.contentResolver.query(pdfData!!, null, null, null, null)
-                    if (cursor != null && cursor.moveToFirst()) {
-                        pdfName =
-                            cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                    }
-                    cursor!!.close()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            } else if (pdfData!!.toString().startsWith("file://")) {
-                pdfName = File(pdfData.toString()).name
-            }
+            pdfName = this.getPdfName(pdfData)
+
             binding.tvSelectedPdf.text = pdfName
         }
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child("pdf")
-        storageReference = FirebaseStorage.getInstance().reference
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_PDF)
+        storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_PDF)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
-        private const val REQ_CODE = 1
+        private const val FB_CHILD_PDF = "Pdf"
+        private const val PDF_REQ_CODE = 1
+        private const val PDF_TITLE_FB = "pdfTitle"
+        private const val PDF_URL_FB = "pdfUrl"
     }
 }

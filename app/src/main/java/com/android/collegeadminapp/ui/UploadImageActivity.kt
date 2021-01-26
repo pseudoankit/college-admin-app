@@ -17,11 +17,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 
 class UploadImageActivity : AppCompatActivity() {
 
@@ -52,10 +49,10 @@ class UploadImageActivity : AppCompatActivity() {
     private fun buttonUploadImage() {
         when {
             bitmap == null -> {
-                toast("Please Select an image")
+                toast(getString(R.string.please_select_image))
             }
             category == getString(R.string.select_category) -> {
-                toast("Please Select Image Category")
+                toast(getString(R.string.please_select_image_category))
             }
             else -> {
                 progressBar.show()
@@ -65,56 +62,52 @@ class UploadImageActivity : AppCompatActivity() {
     }
 
     private suspend fun convertBitmapAndUpload() {
+        //todo simplify,coroutines
         //upload image to firebase if all ok,converting bitmap to upload task to upload to firebase
         val bos: ByteArrayOutputStream = ByteArrayOutputStream()
         bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
         val finalImage = bos.toByteArray()
-        val filePath = storageReference.child("${finalImage}jpg")
-        val uploadTask = filePath.putBytes(finalImage)
+        val storageFilePath = storageReference.child("${finalImage}jpg")
+        val uploadTask = storageFilePath.putBytes(finalImage)
         uploadTask.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 uploadTask.addOnSuccessListener {
-                    filePath.downloadUrl.addOnSuccessListener { uri ->
+                    storageFilePath.downloadUrl.addOnSuccessListener { uri ->
                         downloadUrl = uri.toString()
 
-                        Coroutines.io { uploadImage() }
+                        Coroutines.io { uploadImageToRTDB() }
                     }
                 }
             } else {
                 progressBar.hide()
-                toast("error")
+                toast(getString(R.string.something_went_wrong))
             }
         }
     }
 
-    private suspend fun uploadImage() {
+    private suspend fun uploadImageToRTDB() {
         val dbReference = databaseReference.child(category)
         val uniqueKey = dbReference.push().key
         dbReference.child(uniqueKey!!).setValue(downloadUrl)
             .addOnSuccessListener {
                 progressBar.hide()
-                toast("Image Uploaded Successfully")
+                toast(getString(R.string.uploaded_successfully))
             }.addOnFailureListener {
                 progressBar.hide()
-                toast("error ${it.toString()}")
+                toast("${getString(R.string.something_went_wrong)}")
             }
     }
 
     private fun openGallery() {
         Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            startActivityForResult(this, REQ_CODE)
+            startActivityForResult(this, GALLERY_REQ_CODE)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_CODE && resultCode == RESULT_OK) {
-            val uri = data!!.data
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+        if (requestCode == GALLERY_REQ_CODE && resultCode == RESULT_OK) {
+            bitmap = getSelectedGalleryBitmap(data!!.data)
             binding.ivGallery.setImageBitmap(bitmap!!)
         }
     }
@@ -135,21 +128,20 @@ class UploadImageActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
             }
 
         }
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child("Gallery")
-        storageReference = FirebaseStorage.getInstance().reference.child("Gallery")
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_GALLERY)
+        storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_GALLERY)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
-        private const val REQ_CODE = 1
-
+        private const val GALLERY_REQ_CODE = 1
+        private const val FB_CHILD_GALLERY = "Gallery"
     }
 
 }

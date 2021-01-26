@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="faculty"
+            type="com.android.collegeadminapp.ui.faculty.Faculty" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/margin_10"
+            android:weightSum="2">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1.7"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{faculty.name}"
+                    android:textStyle="bold|italic"
+                    android:textColor="@color/textColor"
+                    android:textSize="@dimen/text_17" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{faculty.email}"
+                    android:textColor="@color/textColor"
+                    android:textStyle="italic"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{faculty.post}"
+                    android:textColor="@color/textColor"
+                    android:textStyle="italic"
+                    android:textSize="@dimen/text_17" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/updateInfoFaculty"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/margin_5"
+                    android:text="@string/update_info"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/facultyImage"
+                android:layout_width="@dimen/rv_circular_image"
+                android:layout_height="@dimen/rv_circular_image"
+                android:layout_gravity="center"
+                android:layout_weight="0.3"
+                android:src="@drawable/user_image" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

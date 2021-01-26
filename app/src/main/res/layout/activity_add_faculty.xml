@@ -6,6 +6,7 @@
         android:layout_height="match_parent">
 
         <ScrollView
+            android:padding="@dimen/margin_15"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -32,7 +33,7 @@
                         android:id="@+id/etFacultyName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Name"
+                        android:hint="@string/name"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -46,7 +47,7 @@
                         android:id="@+id/etFacultyEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Email"
+                        android:hint="@string/email"
                         android:inputType="textEmailAddress" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -60,7 +61,7 @@
                         android:id="@+id/etFacultyPost"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Post"
+                        android:hint="@string/post"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -69,9 +70,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/margin_15"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:gravity="center"
-                    android:spinnerMode="dropdown" />
+                    android:background="@android:drawable/spinner_background"
+                    android:gravity="center" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUpdateFaculty"

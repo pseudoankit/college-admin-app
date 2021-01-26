@@ -17,7 +17,6 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
-import java.io.IOException
 
 class UploadNoticeActivity : AppCompatActivity() {
 
@@ -58,23 +57,24 @@ class UploadNoticeActivity : AppCompatActivity() {
     }
 
     private suspend fun convertBitmapAndUpload() {
+        //todo simplify coroutines
         //upload image to firebase if all ok,converting bitmap to upload task to upload to firebase
         val bos: ByteArrayOutputStream = ByteArrayOutputStream()
         bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
         val finalImage = bos.toByteArray()
-        val filePath = storageReference.child("${finalImage}jpg")
-        val uploadTask = filePath.putBytes(finalImage)
+        val storageFilePath = storageReference.child("${finalImage}jpg")
+        val uploadTask = storageFilePath.putBytes(finalImage)
         uploadTask.addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 uploadTask.addOnSuccessListener {
-                    filePath.downloadUrl.addOnSuccessListener { uri ->
+                    storageFilePath.downloadUrl.addOnSuccessListener { uri ->
                         downloadUrl = uri.toString()
                         Coroutines.io { uploadNotice() }
                     }
                 }
             } else {
                 progressBar.hide()
-                toast("error")
+                toast(getString(R.string.something_went_wrong))
             }
         }
     }
@@ -91,39 +91,35 @@ class UploadNoticeActivity : AppCompatActivity() {
         databaseReference.child(uniqueKey).setValue(noticeData)
             .addOnSuccessListener {
                 progressBar.hide()
-                toast("Notice Uploaded Successfully")
+                toast(getString(R.string.uploaded_successfully))
             }.addOnFailureListener {
                 progressBar.hide()
-                toast("Error${it.toString()}")
+                toast(getString(R.string.something_went_wrong))
             }
     }
 
     private fun openGallery() {
         Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            startActivityForResult(this, REQ_CODE)
+            startActivityForResult(this, GALLERY_REQ_CODE)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQ_CODE && resultCode == RESULT_OK) {
-            val uri = data!!.data
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+        if (requestCode == GALLERY_REQ_CODE && resultCode == RESULT_OK) {
+            bitmap = getSelectedGalleryBitmap(data!!.data)
             binding.ivSelectedNotice.setImageBitmap(bitmap!!)
         }
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child("Notice")
-        storageReference = FirebaseStorage.getInstance().reference.child("Notice")
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_NOTICE)
+        storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_NOTICE)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
-        private const val REQ_CODE = 1
+        private const val GALLERY_REQ_CODE = 1
+        private const val FB_CHILD_NOTICE = "Notice"
     }
 }

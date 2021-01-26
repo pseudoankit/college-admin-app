@@ -59,9 +59,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/margin_15"
-                    android:background="@android:drawable/btn_dropdown"
-                    android:gravity="center"
-                    android:spinnerMode="dropdown" />
+                    android:background="@android:drawable/spinner_background"
+                    android:gravity="center" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnUploadImage"
@@ -87,9 +86,9 @@
 
         <LinearLayout
             android:id="@+id/linear_layout"
-            android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
             android:orientation="horizontal" />
     </RelativeLayout>
 </layout>
