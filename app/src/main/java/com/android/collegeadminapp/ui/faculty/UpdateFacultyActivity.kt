@@ -82,7 +82,7 @@ class UpdateFacultyActivity : AppCompatActivity() {
         rv.layoutManager = LinearLayoutManager(this@UpdateFacultyActivity)
         rv.adapter = adapter
 
-        adapter.listener = {faculty ->
+        adapter.listener = {_,faculty,_ ->
             Intent(this,AddUpdateFacultyActivity::class.java).apply {
                 this.putExtra(IS_ADD,false)
                 this.putExtra(UPDATE_OBJ,faculty)

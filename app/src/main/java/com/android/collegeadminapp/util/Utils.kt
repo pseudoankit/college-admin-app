@@ -9,6 +9,7 @@ import android.provider.OpenableColumns
 import android.view.View
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
+import androidx.databinding.BindingAdapter
 import com.android.collegeadminapp.R
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
@@ -84,6 +85,11 @@ fun Context.spinner(spinnerItem: Array<String>, spinner: Spinner): Spinner {
         spinner.adapter = this
     }
     return spinner
+}
+
+@BindingAdapter("imageResource")
+fun setImageResource(imageView: ImageView, resource: Bitmap) {
+    imageView.setImageBitmap(resource)
 }
 
 fun Context.toast(message: String) {

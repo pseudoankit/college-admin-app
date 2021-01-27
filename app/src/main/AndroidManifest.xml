@@ -12,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CollegeAdminApp">
-        <activity android:name=".ui.faculty.AddUpdateFacultyActivity"/>
+        <activity android:name=".ui.notice.DeleteNoticeActivity"></activity>
+        <activity android:name=".ui.faculty.AddUpdateFacultyActivity" />
         <activity android:name=".ui.faculty.UpdateFacultyActivity" />
         <activity android:name=".ui.UploadPdfActivity" />
         <activity android:name=".ui.UploadImageActivity" />

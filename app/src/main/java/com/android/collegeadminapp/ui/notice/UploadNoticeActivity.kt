@@ -121,6 +121,6 @@ class UploadNoticeActivity : AppCompatActivity() {
 
     companion object {
         private const val GALLERY_REQ_CODE = 1
-        private const val FB_CHILD_NOTICE = "Notice"
+        const val FB_CHILD_NOTICE = "Notice"
     }
 }

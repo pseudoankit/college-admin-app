@@ -9,6 +9,8 @@
     <string name="update_faculty">Update Faculty</string>
     <string name="delete_faculty">Delete Faculty</string>
     <string name="delete_notice">Delete Notice</string>
+    <string name="dialog_delete_conformation">Are you sure u want to delete?</string>
+    <string name="notice_deleted">Notice Deleted Successfully</string>
     <string name="error_required">"Required "</string>
     <string name="select_category">Select Category</string>
     <string name="convocation">Convocation</string>

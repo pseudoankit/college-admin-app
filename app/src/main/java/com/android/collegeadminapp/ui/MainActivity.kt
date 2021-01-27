@@ -7,6 +7,7 @@ import androidx.databinding.DataBindingUtil
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityMainBinding
 import com.android.collegeadminapp.ui.faculty.UpdateFacultyActivity
+import com.android.collegeadminapp.ui.notice.DeleteNoticeActivity
 import com.android.collegeadminapp.ui.notice.UploadNoticeActivity
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +32,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.layoutUpdateFaculty.setOnClickListener {
             startActivity(Intent(this, UpdateFacultyActivity::class.java))
+        }
+        binding.layoutDeleteNotice.setOnClickListener {
+            startActivity(Intent(this, DeleteNoticeActivity::class.java))
         }
     }
 }

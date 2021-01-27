@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="notice"
+            type="com.android.collegeadminapp.ui.notice.Notice" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_10">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/margin_10">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/notice_image"
+                android:layout_width="@dimen/civ_rv_notice"
+                android:layout_height="@dimen/civ_rv_notice"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/no_image" />
+
+            <TextView
+                android:text="@{notice.title}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_10"
+                android:layout_marginEnd="45dp"
+                android:textColor="@color/textColor"
+                android:textSize="@dimen/text_17" />
+
+            <ImageView
+                android:id="@+id/delete_notice"
+                android:layout_width="@dimen/dimen_35"
+                android:layout_height="@dimen/dimen_35"
+                android:padding="@dimen/margin_5"
+                android:layout_marginStart="-40dp"
+                android:background="@drawable/circle_purple"
+                android:src="@drawable/ic_delete" />
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

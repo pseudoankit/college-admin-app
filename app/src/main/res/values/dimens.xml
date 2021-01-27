@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="dimen_400">400dp</dimen>
+    <dimen name="dimen_35">35dp</dimen>
 
     <dimen name="margin_30">30dp</dimen>
     <dimen name="margin_15">15dp</dimen>
@@ -11,8 +12,9 @@
     <dimen name="layout_64">64dp</dimen>
     <dimen name="layout_width_130">130dp</dimen>
     <dimen name="layout_height_150">150dp</dimen>
-    <dimen name="circle_image_125">125dp</dimen>
-    <dimen name="rv_circular_image">105dp</dimen>
+    <dimen name="civ_add_update_faculty">125dp</dimen>
+    <dimen name="civ_rv_faculty">105dp</dimen>
+    <dimen name="civ_rv_notice">60dp</dimen>
 
     <dimen name="text_14">14sp</dimen>
     <dimen name="text_17">17sp</dimen>

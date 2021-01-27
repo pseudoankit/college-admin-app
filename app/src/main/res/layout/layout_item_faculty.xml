@@ -62,8 +62,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/facultyImage"
-                android:layout_width="@dimen/rv_circular_image"
-                android:layout_height="@dimen/rv_circular_image"
+                android:layout_width="@dimen/civ_rv_faculty"
+                android:layout_height="@dimen/civ_rv_faculty"
                 android:layout_gravity="center"
                 android:layout_weight="0.3"
                 android:src="@drawable/user_image" />

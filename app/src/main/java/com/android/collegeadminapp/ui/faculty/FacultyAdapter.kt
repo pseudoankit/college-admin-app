@@ -16,7 +16,7 @@ class FacultyAdapter : BaseRVAdapter<Faculty,LayoutItemFacultyBinding>() {
         holder.binding.faculty = faculty    //items is list in base rv
         Picasso.get().load(faculty.image).into(holder.binding.facultyImage)
         holder.binding.updateInfoFaculty.setOnClickListener {
-            listener?.invoke(faculty)
+            listener?.invoke(it,faculty,position)
         }
     }
 
