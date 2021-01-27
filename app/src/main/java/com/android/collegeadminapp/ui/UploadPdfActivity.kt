@@ -78,12 +78,13 @@ class UploadPdfActivity : AppCompatActivity() {
     private suspend fun uploadPdfToRTDB(pdfUrl: String) {
         val uniqueKey = databaseReference.push().key
         val data: HashMap<String, String> = HashMap()
-        data[PDF_TITLE_FB] = pdfTitle
-        data[PDF_URL_FB] = pdfUrl
+        data[RTDB_PDF_TITLE] = pdfTitle
+        data[RTDB_PDF_URL] = pdfUrl
         databaseReference.child(uniqueKey!!).setValue(data)
             .addOnCompleteListener {
                 progressBar.hide()
                 toast(getString(R.string.uploaded_successfully))
+                finish()
             }.addOnFailureListener {
                 progressBar.hide()
                 toast(getString(R.string.failed_to_upload))
@@ -109,15 +110,15 @@ class UploadPdfActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_PDF)
-        storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_PDF)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_PDF)
+        storageReference = FirebaseStorage.getInstance().reference.child(RTDB_PDF)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
-        private const val FB_CHILD_PDF = "Pdf"
+        private const val RTDB_PDF = "Pdf"
         private const val PDF_REQ_CODE = 1
-        private const val PDF_TITLE_FB = "pdfTitle"
-        private const val PDF_URL_FB = "pdfUrl"
+        private const val RTDB_PDF_TITLE = "Title"
+        private const val RTDB_PDF_URL = "Url"
     }
 }

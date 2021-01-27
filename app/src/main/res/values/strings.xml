@@ -31,6 +31,7 @@
     <string name="please_select_image_category">Please Select Image Category</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="faculty_updated_successfully">Faculty Updated Successfully</string>
+    <string name="teacher_deleted_successfully">Teacher Deleted Successfully</string>
 
     <string-array name="image_categories">
         <item>@string/select_category</item>

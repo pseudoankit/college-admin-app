@@ -47,7 +47,7 @@ class UploadNoticeActivity : AppCompatActivity() {
             }
             bitmap == null -> {
                 downloadUrl = ""
-                lifecycleScope.launch { uploadNotice() }
+                lifecycleScope.launch { uploadNoticeToRTDB() }
             }
             else -> {
                 progressBar.show()
@@ -69,7 +69,7 @@ class UploadNoticeActivity : AppCompatActivity() {
                 uploadTask.addOnSuccessListener {
                     storageFilePath.downloadUrl.addOnSuccessListener { uri ->
                         downloadUrl = uri.toString()
-                        Coroutines.io { uploadNotice() }
+                        Coroutines.io { uploadNoticeToRTDB() }
                     }
                 }
             } else {
@@ -79,7 +79,7 @@ class UploadNoticeActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun uploadNotice() {
+    private suspend fun uploadNoticeToRTDB() {
         //if title is generated successfully then uploading to firebase db and storage
         val uniqueKey = databaseReference.push().key
         val date = getCurrentDate()
@@ -92,6 +92,7 @@ class UploadNoticeActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 progressBar.hide()
                 toast(getString(R.string.uploaded_successfully))
+                finish()
             }.addOnFailureListener {
                 progressBar.hide()
                 toast(getString(R.string.something_went_wrong))

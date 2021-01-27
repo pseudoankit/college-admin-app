@@ -92,9 +92,10 @@ class UploadImageActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 progressBar.hide()
                 toast(getString(R.string.uploaded_successfully))
+                finish()
             }.addOnFailureListener {
                 progressBar.hide()
-                toast("${getString(R.string.something_went_wrong)}")
+                toast("getString(R.string.something_went_wrong)")
             }
     }
 
@@ -134,14 +135,14 @@ class UploadImageActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_GALLERY)
-        storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_GALLERY)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_GALLERY)
+        storageReference = FirebaseStorage.getInstance().reference.child(RTDB_GALLERY)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
         private const val GALLERY_REQ_CODE = 1
-        private const val FB_CHILD_GALLERY = "Gallery"
+        private const val RTDB_GALLERY = "Gallery"
     }
 
 }

@@ -45,6 +45,18 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
         binding.ivFacultyImage.setOnClickListener { openGallery() }
 
         binding.btnUpdateFaculty.setOnClickListener { buttonUpdateFaculty() }
+
+        binding.btnDeleteFaculty.setOnClickListener { deleteFaculty() }
+    }
+
+    private fun deleteFaculty() {
+        databaseReference.child(faculty.category).child(faculty.key).removeValue()
+            .addOnCompleteListener{
+                toast(getString(R.string.teacher_deleted_successfully))
+                finish()
+            }.addOnFailureListener {
+                toast(getString(R.string.something_went_wrong))
+            }
     }
 
     private fun buttonUpdateFaculty() {
@@ -81,7 +93,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
                 }
             } else {
                 progressBar.hide()
-                toast("error")
+                toast(getString(R.string.something_went_wrong))
             }
         }
     }
@@ -104,7 +116,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
             val data: HashMap<String, Any> = HashMap()
             data["name"] = name
             data["email"] = email
-            data[faculty.post] = post
+            data["post"] = post
             if (bitmap == null) {
                 data["image"] = faculty.image
             } else {
@@ -117,7 +129,6 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
                     finish()
                 }.addOnFailureListener {
                     progressBar.hide()
-                    Log.d("TAG", "uploadFacultyToRTDB: $it")
                     toast(getString(R.string.something_went_wrong))
                 }
         }
@@ -202,14 +213,14 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
             binding.etFacultyPost.setText(faculty.post)
         }
 
-        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_FACULTY)
-        storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_FACULTY)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_FACULTY)
+        storageReference = FirebaseStorage.getInstance().reference.child(RTDB_FACULTY)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
         private const val GALLERY_REQ_CODE = 1
-        const val FB_CHILD_FACULTY = "Faculty"
+        const val RTDB_FACULTY = "Faculty"
         const val IS_ADD = "is_add"
         const val UPDATE_OBJ = "faculty"
     }

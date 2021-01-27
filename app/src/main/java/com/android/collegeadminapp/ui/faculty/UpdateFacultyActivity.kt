@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityUpdateFacultyBinding
-import com.android.collegeadminapp.ui.faculty.AddUpdateFacultyActivity.Companion.FB_CHILD_FACULTY
+import com.android.collegeadminapp.ui.faculty.AddUpdateFacultyActivity.Companion.RTDB_FACULTY
 import com.android.collegeadminapp.ui.faculty.AddUpdateFacultyActivity.Companion.IS_ADD
 import com.android.collegeadminapp.ui.faculty.AddUpdateFacultyActivity.Companion.UPDATE_OBJ
 import com.android.collegeadminapp.util.hide
@@ -92,6 +92,6 @@ class UpdateFacultyActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_FACULTY)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_FACULTY)
     }
 }
