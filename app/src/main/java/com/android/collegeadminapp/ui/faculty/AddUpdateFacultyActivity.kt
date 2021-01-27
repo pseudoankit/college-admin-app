@@ -3,8 +3,6 @@ package com.android.collegeadminapp.ui.faculty
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ProgressBar
@@ -25,14 +23,14 @@ import java.io.ByteArrayOutputStream
 class AddUpdateFacultyActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddUpdateFacultyBinding
-    private lateinit var progressBar: ProgressBar
     private lateinit var databaseReference: DatabaseReference       //Real time database reference
     private lateinit var storageReference: StorageReference
     private lateinit var department: String
-    private lateinit var downloadUrl: String
+    private lateinit var progressBar: ProgressBar
+    private lateinit var imageUrl: String
     private var bitmap: Bitmap? = null
     private var isAdd = true
-    private lateinit var faculty: Faculty
+    private lateinit var facultyIfUpdate: Faculty
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +40,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
 
         setSpinner()
 
-        binding.ivFacultyImage.setOnClickListener { openGallery() }
+        binding.ivFacultyImage.setOnClickListener { openGallery(GALLERY_REQ_CODE) }
 
         binding.btnUpdateFaculty.setOnClickListener { buttonUpdateFaculty() }
 
@@ -50,7 +48,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
     }
 
     private fun deleteFaculty() {
-        databaseReference.child(faculty.category).child(faculty.key).removeValue()
+        databaseReference.child(facultyIfUpdate.category).child(facultyIfUpdate.key).removeValue()
             .addOnCompleteListener{
                 toast(getString(R.string.teacher_deleted_successfully))
                 finish()
@@ -86,7 +84,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 uploadTask.addOnSuccessListener {
                     storageFilePath.downloadUrl.addOnSuccessListener { uri ->
-                        downloadUrl = uri.toString()
+                        imageUrl = uri.toString()
 
                         Coroutines.io { uploadFacultyToRTDB(name, email, post) }
                     }
@@ -102,7 +100,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
         if (isAdd) {
             val dbReference = databaseReference.child(department)
             val uniqueKey = dbReference.push().key
-            val faculty = Faculty(name, email, post, downloadUrl, uniqueKey!!,department)
+            val faculty = Faculty(name, email, post, imageUrl, uniqueKey!!,department)
             dbReference.child(uniqueKey).setValue(faculty)
                 .addOnSuccessListener {
                     progressBar.hide()
@@ -118,11 +116,11 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
             data["email"] = email
             data["post"] = post
             if (bitmap == null) {
-                data["image"] = faculty.image
+                data["image"] = facultyIfUpdate.image
             } else {
-                data["image"] = downloadUrl
+                data["image"] = imageUrl
             }
-            databaseReference.child(faculty.category).child(faculty.key).updateChildren(data)
+            databaseReference.child(facultyIfUpdate.category).child(facultyIfUpdate.key).updateChildren(data)
                 .addOnSuccessListener {
                     progressBar.hide()
                     toast(getString(R.string.faculty_updated_successfully))
@@ -163,12 +161,6 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
         return true
     }
 
-    private fun openGallery() {
-        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            startActivityForResult(this, GALLERY_REQ_CODE)
-        }
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GALLERY_REQ_CODE && resultCode == RESULT_OK) {
@@ -205,12 +197,12 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
             binding.btnUpdateFaculty.text = getString(R.string.add_faculty)
         } else {
             //if is update
-            faculty = intent!!.getParcelableExtra(UPDATE_OBJ)!!
+            facultyIfUpdate = intent!!.getParcelableExtra(UPDATE_OBJ)!!
             binding.spinnerTeacherDepartments.hide()
-            Picasso.get().load(faculty.image).into(binding.ivFacultyImage)
-            binding.etFacultyName.setText(faculty.name)
-            binding.etFacultyEmail.setText(faculty.email)
-            binding.etFacultyPost.setText(faculty.post)
+            Picasso.get().load(facultyIfUpdate.image).into(binding.ivFacultyImage)
+            binding.etFacultyName.setText(facultyIfUpdate.name)
+            binding.etFacultyEmail.setText(facultyIfUpdate.email)
+            binding.etFacultyPost.setText(facultyIfUpdate.post)
         }
 
         databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_FACULTY)

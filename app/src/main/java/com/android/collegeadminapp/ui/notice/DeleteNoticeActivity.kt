@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityDeleteNoticeBinding
+import com.android.collegeadminapp.util.confirmationAlertDialog
 import com.android.collegeadminapp.util.hide
 import com.android.collegeadminapp.util.show
 import com.android.collegeadminapp.util.toast
@@ -20,7 +21,7 @@ class DeleteNoticeActivity : AppCompatActivity() {
     private lateinit var list: MutableList<Notice>
     private val adapter by lazy { NoticeAdapter() }
     private var dialogYes = false
-    val positiveButtonClick = { _: DialogInterface,_: Int ->
+    val positiveButtonClick = { _: DialogInterface, _: Int ->
         dialogYes = true
     }
 
@@ -66,23 +67,25 @@ class DeleteNoticeActivity : AppCompatActivity() {
         binding.rvNotice.adapter = adapter
 
         adapter.listener = { _, notice, _ ->
+
+
             confirmationAlertDialog(
                 getString(R.string.delete_notice),
                 getString(R.string.dialog_delete_conformation)
-            )
-
-            if (dialogYes) {
-                databaseReference.child(notice.key).removeValue()
-                    .addOnCompleteListener {
-                        toast(getString(R.string.notice_deleted))
-                    }.addOnFailureListener {
-                        toast(getString(R.string.something_went_wrong))
-                    }
-            }
+            ).setPositiveButton(
+                android.R.string.ok,
+                DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
+                    databaseReference.child(notice.key).removeValue()
+                        .addOnCompleteListener {
+                            toast(getString(R.string.notice_deleted))
+                        }.addOnFailureListener {
+                            toast(getString(R.string.something_went_wrong))
+                        }
+                }).show()
         }
     }
 
-    fun confirmationAlertDialog(
+    fun dconfirmationAlertDialog(
         title: String,
         message: String
     ) {

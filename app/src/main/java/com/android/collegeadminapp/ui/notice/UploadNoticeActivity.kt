@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.widget.ProgressBar
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -23,7 +22,7 @@ class UploadNoticeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUploadNoticeBinding
     private lateinit var databaseReference: DatabaseReference       //Real time database reference
     private lateinit var storageReference: StorageReference        //storage reference
-    private lateinit var downloadUrl: String
+    private lateinit var imageUrl: String
     private lateinit var progressBar: ProgressBar
     private var bitmap: Bitmap? = null
 
@@ -33,7 +32,7 @@ class UploadNoticeActivity : AppCompatActivity() {
 
         init()
 
-        binding.layoutSelectImage.setOnClickListener { openGallery() }
+        binding.layoutSelectImage.setOnClickListener { openGallery(GALLERY_REQ_CODE) }
 
         binding.btnUploadNotice.setOnClickListener { buttonUploadNotice() }
 
@@ -46,7 +45,7 @@ class UploadNoticeActivity : AppCompatActivity() {
                 binding.etNoticeTitle.requestFocus()
             }
             bitmap == null -> {
-                downloadUrl = ""
+                imageUrl = ""
                 lifecycleScope.launch { uploadNoticeToRTDB() }
             }
             else -> {
@@ -68,7 +67,7 @@ class UploadNoticeActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 uploadTask.addOnSuccessListener {
                     storageFilePath.downloadUrl.addOnSuccessListener { uri ->
-                        downloadUrl = uri.toString()
+                        imageUrl = uri.toString()
                         Coroutines.io { uploadNoticeToRTDB() }
                     }
                 }
@@ -86,7 +85,7 @@ class UploadNoticeActivity : AppCompatActivity() {
         val time = getCurrentTime()
         val title = binding.etNoticeTitle.text!!.trim().toString()
 
-        val noticeData = Notice(title, downloadUrl, date, time, uniqueKey!!)
+        val noticeData = Notice(title, imageUrl, date, time, uniqueKey!!)
 
         databaseReference.child(uniqueKey).setValue(noticeData)
             .addOnSuccessListener {
@@ -97,12 +96,6 @@ class UploadNoticeActivity : AppCompatActivity() {
                 progressBar.hide()
                 toast(getString(R.string.something_went_wrong))
             }
-    }
-
-    private fun openGallery() {
-        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            startActivityForResult(this, GALLERY_REQ_CODE)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

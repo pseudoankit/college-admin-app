@@ -39,7 +39,6 @@ class UploadPdfActivity : AppCompatActivity() {
     }
 
     private fun buttonUploadPdf() {
-
         pdfTitle = binding.etPdfTitle.text!!.trim().toString()
         when {
             pdfData == null -> {
@@ -95,7 +94,10 @@ class UploadPdfActivity : AppCompatActivity() {
         Intent().apply {
             this.type = "application/pdf"
             this.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(this, getString(R.string.select_pdf)), PDF_REQ_CODE)
+            startActivityForResult(
+                Intent.createChooser(this, getString(R.string.select_pdf)),
+                PDF_REQ_CODE
+            )
         }
     }
 

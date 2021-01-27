@@ -1,6 +1,9 @@
 package com.android.collegeadminapp.util
 
+import android.R.attr.data
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.net.Uri
@@ -8,9 +11,12 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import com.android.collegeadminapp.R
+import com.android.collegeadminapp.ui.UploadImageActivity
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import java.io.ByteArrayOutputStream
@@ -18,6 +24,7 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 fun uploadTask(bitmap: Bitmap, storageReference: StorageReference, pathString: String): UploadTask {
     val bos: ByteArrayOutputStream = ByteArrayOutputStream()
@@ -41,15 +48,39 @@ fun Context.progressBar(layout: LinearLayout): ProgressBar {
     }
 }
 
+fun Context.spinner(spinnerItem: Array<String>, spinner: Spinner): Spinner {
+    //Todo simplify spinner
+    ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItem).apply {
+        this.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = this
+    }
+    return spinner
+}
+
 fun Context.getSelectedGalleryBitmap(uri: Uri?): Bitmap? {
     //todo remove deprecation
-    var bitmap : Bitmap? = null
+    var bitmap: Bitmap? = null
     try {
         bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
     } catch (e: IOException) {
         e.printStackTrace()
     }
     return bitmap
+}
+//
+
+fun Context.confirmationAlertDialog(title: String, message: String): AlertDialog.Builder {
+    val builder = AlertDialog.Builder(this)
+    builder.apply {
+        setTitle(title)
+        setMessage(message)
+        setIcon(android.R.drawable.ic_dialog_alert)
+        setNegativeButton(android.R.string.no) { dialog, _ ->
+            dialog.dismiss()
+        }
+        setCancelable(false)
+    }
+    return builder
 }
 
 fun Context.getPdfName(pdfData: Uri?): String {
@@ -71,20 +102,10 @@ fun Context.getPdfName(pdfData: Uri?): String {
     return pdfName
 }
 
-fun openGallery() {
-    //todo gallery
-//    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-//        startActivityForResult(this,8)
-//    }
-}
-
-fun Context.spinner(spinnerItem: Array<String>, spinner: Spinner): Spinner {
-    //Todo simplify spinner
-    ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItem).apply {
-        this.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = this
+fun Activity.openGallery(req_code: Int) {
+    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+        startActivityForResult(this, req_code)
     }
-    return spinner
 }
 
 @BindingAdapter("imageResource")

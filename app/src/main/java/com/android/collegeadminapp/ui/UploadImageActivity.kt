@@ -3,7 +3,6 @@ package com.android.collegeadminapp.ui
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ProgressBar
@@ -23,11 +22,11 @@ import java.io.ByteArrayOutputStream
 class UploadImageActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUploadImageBinding
-    private lateinit var category: String
-    private lateinit var progressBar: ProgressBar
     private lateinit var databaseReference: DatabaseReference       //Real time database reference
     private lateinit var storageReference: StorageReference
-    private lateinit var downloadUrl: String
+    private lateinit var category: String
+    private lateinit var progressBar: ProgressBar
+    private lateinit var imageUrl: String
     private var bitmap: Bitmap? = null
 
 
@@ -39,7 +38,7 @@ class UploadImageActivity : AppCompatActivity() {
 
         setSpinner()
 
-        binding.layoutSelectImage.setOnClickListener { openGallery() }
+        binding.layoutSelectImage.setOnClickListener { openGallery(GALLERY_REQ_CODE) }
 
         binding.btnUploadImage.setOnClickListener { buttonUploadImage() }
 
@@ -73,7 +72,7 @@ class UploadImageActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 uploadTask.addOnSuccessListener {
                     storageFilePath.downloadUrl.addOnSuccessListener { uri ->
-                        downloadUrl = uri.toString()
+                        imageUrl = uri.toString()
 
                         Coroutines.io { uploadImageToRTDB() }
                     }
@@ -88,7 +87,7 @@ class UploadImageActivity : AppCompatActivity() {
     private suspend fun uploadImageToRTDB() {
         val dbReference = databaseReference.child(category)
         val uniqueKey = dbReference.push().key
-        dbReference.child(uniqueKey!!).setValue(downloadUrl)
+        dbReference.child(uniqueKey!!).setValue(imageUrl)
             .addOnSuccessListener {
                 progressBar.hide()
                 toast(getString(R.string.uploaded_successfully))
@@ -97,12 +96,6 @@ class UploadImageActivity : AppCompatActivity() {
                 progressBar.hide()
                 toast("getString(R.string.something_went_wrong)")
             }
-    }
-
-    private fun openGallery() {
-        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            startActivityForResult(this, GALLERY_REQ_CODE)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
