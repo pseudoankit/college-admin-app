@@ -6,9 +6,9 @@
         android:layout_height="match_parent">
 
         <ScrollView
-            android:padding="@dimen/margin_15"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:padding="@dimen/margin_15">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,20 +66,38 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <Spinner
-                    android:id="@+id/spinner_teacher_stream"
+                    android:id="@+id/spinner_teacher_departments"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/margin_15"
                     android:background="@android:drawable/spinner_background"
                     android:gravity="center" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnUpdateFaculty"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_15"
-                    android:text="@string/update_faculty"
-                    android:textAllCaps="false" />
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+                    <!-- todo btn layout-->
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnUpdateFaculty"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_12"
+                        android:layout_weight="1"
+                        android:text="@string/update_faculty"
+                        android:textAllCaps="false" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDeleteFaculty"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/margin_12"
+                        android:layout_weight="1"
+                        android:text="@string/delete_faculty"
+                        android:textAllCaps="false" />
+                </LinearLayout>
             </LinearLayout>
         </ScrollView>
 

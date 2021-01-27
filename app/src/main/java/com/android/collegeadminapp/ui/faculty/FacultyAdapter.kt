@@ -1,7 +1,6 @@
 package com.android.collegeadminapp.ui.faculty
 
-import android.content.ContentValues.TAG
-import android.util.Log
+import android.view.View
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.adapter.BaseRVAdapter
 import com.android.collegeadminapp.databinding.LayoutItemFacultyBinding
@@ -13,13 +12,12 @@ class FacultyAdapter : BaseRVAdapter<Faculty,LayoutItemFacultyBinding>() {
         holder: Companion.BaseViewHolder<LayoutItemFacultyBinding>,
         position: Int
     ) {
-        val item = items[position]
-        holder.binding.faculty = item    //items is list in base rv
-        Picasso.get().load(item.image).into(holder.binding.facultyImage)
+        val faculty = list[position]
+        holder.binding.faculty = faculty    //items is list in base rv
+        Picasso.get().load(faculty.image).into(holder.binding.facultyImage)
         holder.binding.updateInfoFaculty.setOnClickListener {
-            Log.d(TAG, "onBindViewHolder: no")
+            listener?.invoke(faculty)
         }
     }
-
 
 }

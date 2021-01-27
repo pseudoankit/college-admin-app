@@ -10,16 +10,17 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class BaseRVAdapter<T : Any, VB : ViewDataBinding> :
     RecyclerView.Adapter<BaseRVAdapter.Companion.BaseViewHolder<VB>>() {
 
-    var items = mutableListOf<T>()
+    var list = mutableListOf<T>()
 
     fun addItems(items: List<T>) {
-        this.items = items as MutableList<T>
+        list.clear()
+        this.list = items as MutableList<T>
         notifyDataSetChanged()
     }
 
-    override fun getItemCount() = items.size
+    override fun getItemCount() = list.size
 
-    var listener: ((view: View, item: T, position: Int) -> Unit)? = null
+    var listener: ((item: T) -> Unit)? = null
 
     abstract fun layout(): Int
 

@@ -2,37 +2,41 @@ package com.android.collegeadminapp.ui.faculty
 
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
-import com.android.collegeadminapp.databinding.ActivityAddFacultyBinding
+import com.android.collegeadminapp.databinding.ActivityAddUpdateFacultyBinding
 import com.android.collegeadminapp.util.*
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
-class AddFacultyActivity : AppCompatActivity() {
+class AddUpdateFacultyActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAddFacultyBinding
-    private lateinit var category: String
+    private lateinit var binding: ActivityAddUpdateFacultyBinding
     private lateinit var progressBar: ProgressBar
     private lateinit var databaseReference: DatabaseReference       //Real time database reference
     private lateinit var storageReference: StorageReference
+    private lateinit var department: String
     private lateinit var downloadUrl: String
     private var bitmap: Bitmap? = null
+    private var isAdd = true
+    private lateinit var faculty: Faculty
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_add_faculty)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_add_update_faculty)
 
         init()
 
@@ -49,13 +53,18 @@ class AddFacultyActivity : AppCompatActivity() {
         val post = binding.etFacultyPost.text!!.trim().toString()
         if (isValid(name, email, post)) {
             progressBar.show()
-            lifecycleScope.launch { convertAndUploadData(name,email,post) }
+            if (!isAdd && bitmap == null) {
+                lifecycleScope.launch { uploadFacultyToRTDB(name, email, post) }
+            } else {
+                lifecycleScope.launch { convertAndUploadData(name, email, post) }
+            }
+
         }
     }
 
     private suspend fun convertAndUploadData(name: String, email: String, post: String) {
         //todo simplify
-        //upload image to firebase if all ok,converting bitmap to upload task to upload to firebase
+        //converting bitmap to upload task then, upload image to firebase storage
         val bos: ByteArrayOutputStream = ByteArrayOutputStream()
         bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
         val finalImage = bos.toByteArray()
@@ -78,18 +87,40 @@ class AddFacultyActivity : AppCompatActivity() {
     }
 
     private suspend fun uploadFacultyToRTDB(name: String, email: String, post: String) {
-        val dbReference = databaseReference.child(category)
-        val uniqueKey = dbReference.push().key
-        val faculty = Faculty(name,email,post,downloadUrl,uniqueKey!!)
-        dbReference.child(uniqueKey).setValue(faculty)
-            .addOnSuccessListener {
-                progressBar.hide()
-                toast(getString(R.string.faculty_updated_successfully))
-                finish()
-            }.addOnFailureListener {
-                progressBar.hide()
-                toast(getString(R.string.something_went_wrong))
+        if (isAdd) {
+            val dbReference = databaseReference.child(department)
+            val uniqueKey = dbReference.push().key
+            val faculty = Faculty(name, email, post, downloadUrl, uniqueKey!!,department)
+            dbReference.child(uniqueKey).setValue(faculty)
+                .addOnSuccessListener {
+                    progressBar.hide()
+                    toast(getString(R.string.faculty_updated_successfully))
+                    finish()
+                }.addOnFailureListener {
+                    progressBar.hide()
+                    toast(getString(R.string.something_went_wrong))
+                }
+        } else {
+            val data: HashMap<String, Any> = HashMap()
+            data["name"] = name
+            data["email"] = email
+            data[faculty.post] = post
+            if (bitmap == null) {
+                data["image"] = faculty.image
+            } else {
+                data["image"] = downloadUrl
             }
+            databaseReference.child(faculty.category).child(faculty.key).updateChildren(data)
+                .addOnSuccessListener {
+                    progressBar.hide()
+                    toast(getString(R.string.faculty_updated_successfully))
+                    finish()
+                }.addOnFailureListener {
+                    progressBar.hide()
+                    Log.d("TAG", "uploadFacultyToRTDB: $it")
+                    toast(getString(R.string.something_went_wrong))
+                }
+        }
     }
 
     private fun isValid(name: String, email: String, post: String): Boolean {
@@ -109,11 +140,11 @@ class AddFacultyActivity : AppCompatActivity() {
                 binding.etFacultyPost.requestFocus()
                 return false
             }
-            category == getString(R.string.select_category) -> {
+            isAdd && department == getString(R.string.select_category) -> {
                 toast("Please select any category")
                 return false
             }
-            bitmap == null -> {
+            isAdd && bitmap == null -> {
                 toast("Please select an image")
                 return false
             }
@@ -136,10 +167,10 @@ class AddFacultyActivity : AppCompatActivity() {
     }
 
     private fun setSpinner() {
-        val categories = resources.getStringArray(R.array.streams)
+        val categories = resources.getStringArray(R.array.departments)
         this.spinner(
             categories,
-            binding.spinnerTeacherStream
+            binding.spinnerTeacherDepartments
         ).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -147,7 +178,7 @@ class AddFacultyActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                category = categories[position]
+                department = categories[position]
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -157,6 +188,20 @@ class AddFacultyActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        isAdd = intent!!.getBooleanExtra(IS_ADD, true)
+        if (isAdd) {
+            binding.btnDeleteFaculty.hide()
+            binding.btnUpdateFaculty.text = getString(R.string.add_faculty)
+        } else {
+            //if is update
+            faculty = intent!!.getParcelableExtra(UPDATE_OBJ)!!
+            binding.spinnerTeacherDepartments.hide()
+            Picasso.get().load(faculty.image).into(binding.ivFacultyImage)
+            binding.etFacultyName.setText(faculty.name)
+            binding.etFacultyEmail.setText(faculty.email)
+            binding.etFacultyPost.setText(faculty.post)
+        }
+
         databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_FACULTY)
         storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_FACULTY)
         progressBar = this.progressBar(binding.linearLayout)
@@ -165,5 +210,7 @@ class AddFacultyActivity : AppCompatActivity() {
     companion object {
         private const val GALLERY_REQ_CODE = 1
         const val FB_CHILD_FACULTY = "Faculty"
+        const val IS_ADD = "is_add"
+        const val UPDATE_OBJ = "faculty"
     }
 }

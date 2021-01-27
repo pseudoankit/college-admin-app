@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'com.google.gms.google-services' //firebase
     id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.android.extensions'    //parcelable
 }
 
 android {
@@ -34,6 +35,10 @@ android {
     }
     dataBinding {
         enabled = true
+    }
+    androidExtensions {
+        //parcelable
+        experimental = true
     }
 }
 

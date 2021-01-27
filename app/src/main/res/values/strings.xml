@@ -5,7 +5,9 @@
     <string name="upload_notice">Upload Notice</string>
     <string name="upload_image">Upload Image</string>
     <string name="upload_pdf">Upload Pdf</string>
+    <string name="add_faculty">Add Faculty</string>
     <string name="update_faculty">Update Faculty</string>
+    <string name="delete_faculty">Delete Faculty</string>
     <string name="delete_notice">Delete Notice</string>
     <string name="error_required">"Required "</string>
     <string name="select_category">Select Category</string>
@@ -36,7 +38,7 @@
         <item>@string/republic_day</item>
     </string-array>
 
-    <string-array name="streams">
+    <string-array name="departments">
         <item>@string/select_category</item>
         <item>@string/cse</item>
         <item>@string/mechanical</item>
