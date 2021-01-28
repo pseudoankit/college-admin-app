@@ -1,11 +1,14 @@
 package com.android.collegeadminapp.ui.faculty
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.ProgressBar
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -170,24 +173,14 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
     }
 
     private fun setSpinner() {
-        val categories = resources.getStringArray(R.array.departments)
-        this.spinner(
-            categories,
-            binding.spinnerTeacherDepartments
-        ).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                department = categories[position]
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-
+        val getSpinnerItem = {item : String ->
+            department = item
         }
+        this.spinner(
+            resources.getStringArray(R.array.departments),
+            binding.spinnerTeacherDepartments,
+            getSpinnerItem
+        )
     }
 
     private fun init() {

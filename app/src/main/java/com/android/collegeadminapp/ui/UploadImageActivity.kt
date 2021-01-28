@@ -107,24 +107,14 @@ class UploadImageActivity : AppCompatActivity() {
     }
 
     private fun setSpinner() {
-        val categories = resources.getStringArray(R.array.image_categories)
-        this.spinner(
-            categories,
-            binding.spinnerImageCategory
-        ).onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                category = categories[position]
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-
+        val getSpinnerItem = { item: String ->
+            category = item
         }
+        this.spinner(
+            resources.getStringArray(R.array.image_categories),
+            binding.spinnerImageCategory,
+            getSpinnerItem
+        )
     }
 
     private fun init() {

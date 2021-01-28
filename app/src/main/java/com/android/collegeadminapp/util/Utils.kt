@@ -1,8 +1,8 @@
 package com.android.collegeadminapp.util
 
-import android.R.attr.data
 import android.app.Activity
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -12,11 +12,9 @@ import android.provider.OpenableColumns
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import com.android.collegeadminapp.R
-import com.android.collegeadminapp.ui.UploadImageActivity
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import java.io.ByteArrayOutputStream
@@ -27,6 +25,7 @@ import java.util.*
 
 
 fun uploadTask(bitmap: Bitmap, storageReference: StorageReference, pathString: String): UploadTask {
+    //todo
     val bos: ByteArrayOutputStream = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bos)
     val finalImage = bos.toByteArray()
@@ -48,15 +47,6 @@ fun Context.progressBar(layout: LinearLayout): ProgressBar {
     }
 }
 
-fun Context.spinner(spinnerItem: Array<String>, spinner: Spinner): Spinner {
-    //Todo simplify spinner
-    ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItem).apply {
-        this.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner.adapter = this
-    }
-    return spinner
-}
-
 fun Context.getSelectedGalleryBitmap(uri: Uri?): Bitmap? {
     //todo remove deprecation
     var bitmap: Bitmap? = null
@@ -68,6 +58,29 @@ fun Context.getSelectedGalleryBitmap(uri: Uri?): Bitmap? {
     return bitmap
 }
 //
+
+fun Context.spinner(spinnerItem: Array<String>, spinner: Spinner, itemClick: (String) -> Unit) {
+    val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItem).also {
+        it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+    }
+    spinner.apply {
+        this.adapter = adapter
+        onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                itemClick(spinnerItem[position])
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+        }
+    }
+}
 
 fun Context.confirmationAlertDialog(title: String, message: String): AlertDialog.Builder {
     val builder = AlertDialog.Builder(this)
