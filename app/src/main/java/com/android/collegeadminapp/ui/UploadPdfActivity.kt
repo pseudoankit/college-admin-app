@@ -120,7 +120,7 @@ class UploadPdfActivity : AppCompatActivity() {
     companion object {
         private const val RTDB_PDF = "Pdf"
         private const val PDF_REQ_CODE = 1
-        private const val RTDB_PDF_TITLE = "Title"
-        private const val RTDB_PDF_URL = "Url"
+        private const val RTDB_PDF_TITLE = "title"
+        private const val RTDB_PDF_URL = "url"
     }
 }
