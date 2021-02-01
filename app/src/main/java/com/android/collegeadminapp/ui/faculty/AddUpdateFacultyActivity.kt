@@ -1,14 +1,8 @@
 package com.android.collegeadminapp.ui.faculty
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.ProgressBar
-import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
@@ -30,7 +24,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference       //Real time database reference
     private lateinit var storageReference: StorageReference
     private lateinit var department: String
-    private lateinit var progressBar: ProgressBar
+    private lateinit var dialog: Dialog
     private lateinit var imageUrl: String
     private var bitmap: Bitmap? = null
     private var isAdd = true
@@ -66,7 +60,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
         val email = binding.etFacultyEmail.text!!.trim().toString()
         val post = binding.etFacultyPost.text!!.trim().toString()
         if (isValid(name, email, post)) {
-            progressBar.show()
+            dialog.showProgressDialog()
             if (!isAdd && bitmap == null) {
                 lifecycleScope.launch { uploadFacultyToRTDB(name, email, post) }
             } else {
@@ -94,7 +88,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.something_went_wrong))
             }
         }
@@ -107,11 +101,11 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
             val faculty = Faculty(name, email, post, imageUrl, uniqueKey!!,department)
             dbReference.child(uniqueKey).setValue(faculty)
                 .addOnSuccessListener {
-                    progressBar.hide()
+                    dialog.hideProgressDialog()
                     toast(getString(R.string.faculty_updated_successfully))
                     finish()
                 }.addOnFailureListener {
-                    progressBar.hide()
+                    dialog.hideProgressDialog()
                     toast(getString(R.string.something_went_wrong))
                 }
         } else {
@@ -126,11 +120,11 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
             }
             databaseReference.child(facultyIfUpdate.category).child(facultyIfUpdate.key).updateChildren(data)
                 .addOnSuccessListener {
-                    progressBar.hide()
+                    dialog.hideProgressDialog()
                     toast(getString(R.string.faculty_updated_successfully))
                     finish()
                 }.addOnFailureListener {
-                    progressBar.hide()
+                    dialog.hideProgressDialog()
                     toast(getString(R.string.something_went_wrong))
                 }
         }
@@ -174,14 +168,12 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
     }
 
     private fun setSpinner() {
-        val getSpinnerItem = {item : String ->
-            department = item
-        }
-        this.spinner(
+
+        dialog.showSpinner(
             resources.getStringArray(R.array.departments),
-            binding.spinnerTeacherDepartments,
-            getSpinnerItem
-        )
+            binding.spinnerTeacherDepartments){
+            department = it
+        }
     }
 
     private fun init() {
@@ -201,7 +193,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
 
         databaseReference = FirebaseDatabase.getInstance().reference.child(FB_FACULTY)
         storageReference = FirebaseStorage.getInstance().reference.child(FB_FACULTY)
-        progressBar = this.progressBar(binding.linearLayout)
+        dialog = Dialog(this)
     }
 
     companion object {

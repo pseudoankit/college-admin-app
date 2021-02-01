@@ -33,20 +33,6 @@ fun uploadTask(bitmap: Bitmap, storageReference: StorageReference, pathString: S
     return filePath.putBytes(finalImage)
 }
 
-fun Context.progressBar(layout: LinearLayout): ProgressBar {
-    //Todo progressbar dynamically without view
-    ProgressBar(this).apply {
-        this.layoutParams = LinearLayout.LayoutParams(
-            150, 150
-        )
-        this.background =
-            ResourcesCompat.getDrawable(resources, R.drawable.custom_progressbar, null)
-        layout.addView(this)
-        this.hide()
-        return this
-    }
-}
-
 fun Context.getSelectedGalleryBitmap(uri: Uri?): Bitmap? {
     //todo remove deprecation
     var bitmap: Bitmap? = null
@@ -58,43 +44,6 @@ fun Context.getSelectedGalleryBitmap(uri: Uri?): Bitmap? {
     return bitmap
 }
 //
-
-fun Context.spinner(spinnerItem: Array<String>, spinner: Spinner, itemClick: (String) -> Unit) {
-    val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItem).also {
-        it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-    }
-    spinner.apply {
-        this.adapter = adapter
-        onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                itemClick(spinnerItem[position])
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
-
-        }
-    }
-}
-
-fun Context.confirmationAlertDialog(title: String, message: String): AlertDialog.Builder {
-    val builder = AlertDialog.Builder(this)
-    builder.apply {
-        setTitle(title)
-        setMessage(message)
-        setIcon(android.R.drawable.ic_dialog_alert)
-        setNegativeButton(android.R.string.no) { dialog, _ ->
-            dialog.dismiss()
-        }
-        setCancelable(false)
-    }
-    return builder
-}
 
 fun Context.getPdfName(pdfData: Uri?): String {
     var pdfName = ""

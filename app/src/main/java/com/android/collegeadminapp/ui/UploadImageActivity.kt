@@ -26,7 +26,7 @@ class UploadImageActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference       //Real time database reference
     private lateinit var storageReference: StorageReference
     private lateinit var category: String
-    private lateinit var progressBar: ProgressBar
+    private lateinit var dialog: Dialog
     private lateinit var imageUrl: String
     private var bitmap: Bitmap? = null
 
@@ -55,7 +55,7 @@ class UploadImageActivity : AppCompatActivity() {
                 toast(getString(R.string.please_select_image_category))
             }
             else -> {
-                progressBar.show()
+                dialog.showProgressDialog()
                 lifecycleScope.launch { convertBitmapAndUpload() }
             }
         }
@@ -79,22 +79,22 @@ class UploadImageActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.something_went_wrong))
             }
         }
     }
 
-    private suspend fun uploadImageToRTDB() {
+    private fun uploadImageToRTDB() {
         val dbReference = databaseReference.child(category)
         val uniqueKey = dbReference.push().key
         dbReference.child(uniqueKey!!).setValue(imageUrl)
             .addOnSuccessListener {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.uploaded_successfully))
                 finish()
             }.addOnFailureListener {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast("getString(R.string.something_went_wrong)")
             }
     }
@@ -108,20 +108,17 @@ class UploadImageActivity : AppCompatActivity() {
     }
 
     private fun setSpinner() {
-        val getSpinnerItem = { item: String ->
-            category = item
-        }
-        this.spinner(
+        dialog.showSpinner(
             resources.getStringArray(R.array.image_categories),
-            binding.spinnerImageCategory,
-            getSpinnerItem
-        )
+            binding.spinnerImageCategory){
+            category = it
+        }
     }
 
     private fun init() {
         databaseReference = FirebaseDatabase.getInstance().reference.child(FB_GALLERY)
         storageReference = FirebaseStorage.getInstance().reference.child(FB_GALLERY)
-        progressBar = this.progressBar(binding.linearLayout)
+        dialog = Dialog(this)
     }
 
     companion object {

@@ -17,6 +17,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlin.collections.HashMap
 
@@ -25,7 +27,7 @@ class UploadPdfActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUploadPdfBinding
     private lateinit var databaseReference: DatabaseReference       //Real time database reference
     private lateinit var storageReference: StorageReference        //storage reference
-    private lateinit var progressBar: ProgressBar
+    private lateinit var dialog: Dialog
     private var pdfData: Uri? = null
     private lateinit var pdfName: String
     private lateinit var pdfTitle: String
@@ -52,7 +54,7 @@ class UploadPdfActivity : AppCompatActivity() {
                 binding.etPdfTitle.requestFocus()
             }
             else -> {
-                progressBar.show()
+                dialog.showProgressDialog()
                 lifecycleScope.launch { uploadPdf() }
             }
         }
@@ -72,7 +74,7 @@ class UploadPdfActivity : AppCompatActivity() {
                 Coroutines.io { uploadPdfToRTDB(pdfUrl) }
             }
             .addOnFailureListener {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.something_went_wrong))
             }
     }
@@ -84,11 +86,11 @@ class UploadPdfActivity : AppCompatActivity() {
         data[FB_PDF_URL] = pdfUrl
         databaseReference.child(uniqueKey!!).setValue(data)
             .addOnCompleteListener {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.uploaded_successfully))
                 finish()
             }.addOnFailureListener {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.failed_to_upload))
             }
     }
@@ -117,7 +119,7 @@ class UploadPdfActivity : AppCompatActivity() {
     private fun init() {
         databaseReference = FirebaseDatabase.getInstance().reference.child(FB_PDF)
         storageReference = FirebaseStorage.getInstance().reference.child(FB_PDF)
-        progressBar = this.progressBar(binding.linearLayout)
+        dialog = Dialog(this)
     }
 
     companion object {

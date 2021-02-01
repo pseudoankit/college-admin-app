@@ -8,6 +8,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.ui.MainActivity
+import com.android.collegeadminapp.util.Dialog
 import com.android.collegeadminapp.util.toast
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
@@ -15,14 +16,20 @@ import kotlinx.android.synthetic.main.activity_login.*
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        auth = FirebaseAuth.getInstance()
+        init()
 
         btn_login.setOnClickListener { validateUser() }
+    }
+
+    private fun init() {
+        auth = FirebaseAuth.getInstance()
+        dialog = Dialog(this)
     }
 
     private fun validateUser() {
@@ -43,21 +50,27 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
             else -> {
-                performLogin(email,password)
+                dialog.showProgressDialog()
+                performLogin(email, password)
             }
         }
 
     }
 
     private fun performLogin(email: String, password: String) {
-        auth.signInWithEmailAndPassword(email,password)
+        auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener {
-                if(it.isSuccessful) {
+                if (it.isSuccessful) {
+                    dialog.hideProgressDialog()
                     openMainActivity()
                 } else {
+                    dialog.hideProgressDialog()
                     toast(it.exception!!.message!!)
                 }
-            }.addOnFailureListener { toast(it.message!!) }
+            }.addOnFailureListener {
+                dialog.hideProgressDialog()
+                toast(it.message!!)
+            }
     }
 
     private fun openMainActivity() {

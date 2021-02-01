@@ -1,6 +1,5 @@
 package com.android.collegeadminapp.ui.notice
 
-import android.content.DialogInterface
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -17,6 +16,7 @@ class DeleteNoticeActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var list: MutableList<Notice>
     private val adapter by lazy { NoticeAdapter() }
+    private lateinit var dialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,23 +61,22 @@ class DeleteNoticeActivity : AppCompatActivity() {
 
         adapter.listener = { _, notice, _ ->
 
-            confirmationAlertDialog(
+            dialog.showConfirmationDialog(
                 getString(R.string.delete_notice),
                 getString(R.string.dialog_delete_conformation)
-            ).setPositiveButton(
-                android.R.string.ok,
-                DialogInterface.OnClickListener { _: DialogInterface, _: Int ->
-                    databaseReference.child(notice.key).removeValue()
-                        .addOnCompleteListener {
-                            toast(getString(R.string.notice_deleted))
-                        }.addOnFailureListener {
-                            toast(getString(R.string.something_went_wrong))
-                        }
-                }).show()
+            ) { _, _ ->
+                databaseReference.child(notice.key).removeValue()
+                    .addOnCompleteListener {
+                        toast(getString(R.string.notice_deleted))
+                    }.addOnFailureListener {
+                        toast(getString(R.string.something_went_wrong))
+                    }
+            }
         }
     }
 
     private fun init() {
         databaseReference = FirebaseDatabase.getInstance().reference.child(FB_NOTICE)
+        dialog = Dialog(this)
     }
 }

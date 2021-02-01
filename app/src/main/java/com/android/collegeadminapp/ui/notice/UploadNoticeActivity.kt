@@ -2,9 +2,8 @@ package com.android.collegeadminapp.ui.notice
 
 import android.content.Intent
 import android.graphics.Bitmap
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ProgressBar
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
@@ -24,7 +23,7 @@ class UploadNoticeActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference       //Real time database reference
     private lateinit var storageReference: StorageReference        //storage reference
     private lateinit var imageUrl: String
-    private lateinit var progressBar: ProgressBar
+    private lateinit var dialog: Dialog
     private var bitmap: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,10 +46,11 @@ class UploadNoticeActivity : AppCompatActivity() {
             }
             bitmap == null -> {
                 imageUrl = ""
+                dialog.showProgressDialog()
                 lifecycleScope.launch { uploadNoticeToRTDB() }
             }
             else -> {
-                progressBar.show()
+                dialog.showProgressDialog()
                 lifecycleScope.launch { convertBitmapAndUpload() }
             }
         }
@@ -73,13 +73,13 @@ class UploadNoticeActivity : AppCompatActivity() {
                     }
                 }
             } else {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.something_went_wrong))
             }
         }
     }
 
-    private suspend fun uploadNoticeToRTDB() {
+    private fun uploadNoticeToRTDB() {
         //if title is generated successfully then uploading to firebase db and storage
         val uniqueKey = databaseReference.push().key
         val date = getCurrentDate()
@@ -90,11 +90,11 @@ class UploadNoticeActivity : AppCompatActivity() {
 
         databaseReference.child(uniqueKey).setValue(noticeData)
             .addOnSuccessListener {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.uploaded_successfully))
                 finish()
             }.addOnFailureListener {
-                progressBar.hide()
+                dialog.hideProgressDialog()
                 toast(getString(R.string.something_went_wrong))
             }
     }
@@ -110,7 +110,7 @@ class UploadNoticeActivity : AppCompatActivity() {
     private fun init() {
         databaseReference = FirebaseDatabase.getInstance().reference.child(FB_NOTICE)
         storageReference = FirebaseStorage.getInstance().reference.child(FB_NOTICE)
-        progressBar = this.progressBar(binding.linearLayout)
+        dialog = Dialog(this)
     }
 
     companion object {
