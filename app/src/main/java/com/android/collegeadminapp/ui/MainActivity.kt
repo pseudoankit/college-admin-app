@@ -9,7 +9,6 @@ import androidx.databinding.DataBindingUtil
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityMainBinding
 import com.android.collegeadminapp.ui.auth.LoginActivity
-import com.android.collegeadminapp.ui.faculty.FacActivity
 import com.android.collegeadminapp.ui.faculty.UpdateFacultyActivity
 import com.android.collegeadminapp.ui.notice.DeleteNoticeActivity
 import com.android.collegeadminapp.ui.notice.UploadNoticeActivity
@@ -35,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.layoutUploadPdf.setOnClickListener {
-            startActivity(Intent(this, FacActivity::class.java))
+            startActivity(Intent(this, UploadPdfActivity::class.java))
         }
 
         binding.layoutUpdateFaculty.setOnClickListener {
