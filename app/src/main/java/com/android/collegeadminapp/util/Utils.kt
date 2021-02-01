@@ -2,7 +2,6 @@ package com.android.collegeadminapp.util
 
 import android.app.Activity
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
@@ -11,10 +10,11 @@ import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.BindingAdapter
 import com.android.collegeadminapp.R
+import com.android.collegeadminapp.ui.faculty.Faculty
+import com.google.android.gms.tasks.Task
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import java.io.ByteArrayOutputStream
@@ -24,13 +24,32 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-fun uploadTask(bitmap: Bitmap, storageReference: StorageReference, pathString: String): UploadTask {
-    //todo
-    val bos: ByteArrayOutputStream = ByteArrayOutputStream()
+fun Context.uploadImageToFBStorage(
+    bitmap: Bitmap,
+    storageReference: StorageReference,
+    dialog: Dialog,
+    onSuccess: (Uri) -> Unit
+) {
+    val bos = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.JPEG, 50, bos)
     val finalImage = bos.toByteArray()
-    val filePath = storageReference.child(pathString).child("${finalImage}jpg")
-    return filePath.putBytes(finalImage)
+    val storageFilePath = storageReference.child("${finalImage}jpg")
+    val uploadTask = storageFilePath.putBytes(finalImage)
+    uploadTask.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            uploadTask.addOnSuccessListener {
+                storageFilePath.downloadUrl.addOnSuccessListener {
+                    onSuccess(it)
+                }
+            }
+        } else {
+            dialog.hideProgressDialog()
+            toast(getString(R.string.something_went_wrong))
+        }
+    }.addOnFailureListener{
+        dialog.hideProgressDialog()
+        toast(getString(R.string.something_went_wrong))
+    }
 }
 
 fun Context.getSelectedGalleryBitmap(uri: Uri?): Bitmap? {

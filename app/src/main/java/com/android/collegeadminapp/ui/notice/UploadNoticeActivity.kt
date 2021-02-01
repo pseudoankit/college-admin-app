@@ -57,24 +57,10 @@ class UploadNoticeActivity : AppCompatActivity() {
     }
 
     private suspend fun convertBitmapAndUpload() {
-        //todo simplify coroutines
-        //upload image to firebase if all ok,converting bitmap to upload task to upload to firebase
-        val bos: ByteArrayOutputStream = ByteArrayOutputStream()
-        bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
-        val finalImage = bos.toByteArray()
-        val storageFilePath = storageReference.child("${finalImage}jpg")
-        val uploadTask = storageFilePath.putBytes(finalImage)
-        uploadTask.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                uploadTask.addOnSuccessListener {
-                    storageFilePath.downloadUrl.addOnSuccessListener { uri ->
-                        imageUrl = uri.toString()
-                        Coroutines.io { uploadNoticeToRTDB() }
-                    }
-                }
-            } else {
-                dialog.hideProgressDialog()
-                toast(getString(R.string.something_went_wrong))
+        uploadImageToFBStorage(bitmap!!, storageReference, dialog) { uri ->
+            imageUrl = uri.toString()
+            Coroutines.io {
+                uploadNoticeToRTDB()
             }
         }
     }

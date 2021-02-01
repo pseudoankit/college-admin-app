@@ -62,7 +62,6 @@ class UploadPdfActivity : AppCompatActivity() {
 
     private suspend fun uploadPdf() {
         //uploads pdf to fb storage
-        //Todo - listener response coroutines
         val storageFilePath = storageReference.child("${pdfName}-${System.currentTimeMillis()}.pdf")
         storageFilePath.putFile(pdfData!!)
             .addOnSuccessListener {

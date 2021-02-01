@@ -27,7 +27,6 @@ class UploadImageActivity : AppCompatActivity() {
     private lateinit var storageReference: StorageReference
     private lateinit var category: String
     private lateinit var dialog: Dialog
-    private lateinit var imageUrl: String
     private var bitmap: Bitmap? = null
 
 
@@ -62,30 +61,15 @@ class UploadImageActivity : AppCompatActivity() {
     }
 
     private suspend fun convertBitmapAndUpload() {
-        //todo simplify,coroutines
-        //upload image to firebase if all ok,converting bitmap to upload task to upload to firebase
-        val bos: ByteArrayOutputStream = ByteArrayOutputStream()
-        bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
-        val finalImage = bos.toByteArray()
-        val storageFilePath = storageReference.child("${finalImage}jpg")
-        val uploadTask = storageFilePath.putBytes(finalImage)
-        uploadTask.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                uploadTask.addOnSuccessListener {
-                    storageFilePath.downloadUrl.addOnSuccessListener { uri ->
-                        imageUrl = uri.toString()
-
-                        Coroutines.io { uploadImageToRTDB() }
-                    }
-                }
-            } else {
-                dialog.hideProgressDialog()
-                toast(getString(R.string.something_went_wrong))
+        uploadImageToFBStorage(bitmap!!, storageReference, dialog) { uri ->
+            val imageUrl = uri.toString()
+            Coroutines.io {
+                uploadImageToRTDB(imageUrl)
             }
         }
     }
 
-    private fun uploadImageToRTDB() {
+    private fun uploadImageToRTDB(imageUrl: String) {
         val dbReference = databaseReference.child(category)
         val uniqueKey = dbReference.push().key
         dbReference.child(uniqueKey!!).setValue(imageUrl)

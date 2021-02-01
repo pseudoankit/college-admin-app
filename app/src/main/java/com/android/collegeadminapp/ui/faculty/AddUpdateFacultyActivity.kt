@@ -47,7 +47,7 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
 
     private fun deleteFaculty() {
         databaseReference.child(facultyIfUpdate.category).child(facultyIfUpdate.key).removeValue()
-            .addOnCompleteListener{
+            .addOnCompleteListener {
                 toast(getString(R.string.teacher_deleted_successfully))
                 finish()
             }.addOnFailureListener {
@@ -62,72 +62,63 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
         if (isValid(name, email, post)) {
             dialog.showProgressDialog()
             if (!isAdd && bitmap == null) {
-                lifecycleScope.launch { uploadFacultyToRTDB(name, email, post) }
+                lifecycleScope.launch { updateFacultyToDB(name, email, post) }
             } else {
                 lifecycleScope.launch { convertAndUploadData(name, email, post) }
             }
-
         }
     }
 
     private suspend fun convertAndUploadData(name: String, email: String, post: String) {
-        //todo simplify
-        //converting bitmap to upload task then, upload image to firebase storage
-        val bos: ByteArrayOutputStream = ByteArrayOutputStream()
-        bitmap!!.compress(Bitmap.CompressFormat.JPEG, 50, bos)
-        val finalImage = bos.toByteArray()
-        val storageFilePath = storageReference.child("${finalImage}jpg")
-        val uploadTask = storageFilePath.putBytes(finalImage)
-        uploadTask.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                uploadTask.addOnSuccessListener {
-                    storageFilePath.downloadUrl.addOnSuccessListener { uri ->
-                        imageUrl = uri.toString()
 
-                        Coroutines.io { uploadFacultyToRTDB(name, email, post) }
-                    }
+        uploadImageToFBStorage(bitmap!!, storageReference, dialog) { uri ->
+            imageUrl = uri.toString()
+            Coroutines.io {
+                if (isAdd) {
+                    addFacultyToDB(name, email, post)
+                } else {
+                    updateFacultyToDB(name, email, post)
                 }
-            } else {
-                dialog.hideProgressDialog()
-                toast(getString(R.string.something_went_wrong))
             }
         }
     }
 
-    private suspend fun uploadFacultyToRTDB(name: String, email: String, post: String) {
-        if (isAdd) {
-            val dbReference = databaseReference.child(department)
-            val uniqueKey = dbReference.push().key
-            val faculty = Faculty(name, email, post, imageUrl, uniqueKey!!,department)
-            dbReference.child(uniqueKey).setValue(faculty)
-                .addOnSuccessListener {
-                    dialog.hideProgressDialog()
-                    toast(getString(R.string.faculty_updated_successfully))
-                    finish()
-                }.addOnFailureListener {
-                    dialog.hideProgressDialog()
-                    toast(getString(R.string.something_went_wrong))
-                }
-        } else {
-            val data: HashMap<String, Any> = HashMap()
-            data["name"] = name
-            data["email"] = email
-            data["post"] = post
-            if (bitmap == null) {
-                data["image"] = facultyIfUpdate.image
-            } else {
-                data["image"] = imageUrl
+    private fun addFacultyToDB(name: String, email: String, post: String) {
+        val dbReference = databaseReference.child(department)
+        val uniqueKey = dbReference.push().key
+        val faculty = Faculty(name, email, post, imageUrl, uniqueKey!!, department)
+        dbReference.child(uniqueKey).setValue(faculty)
+            .addOnSuccessListener {
+                dialog.hideProgressDialog()
+                toast(getString(R.string.faculty_updated_successfully))
+                finish()
+            }.addOnFailureListener {
+                dialog.hideProgressDialog()
+                toast(getString(R.string.something_went_wrong))
             }
-            databaseReference.child(facultyIfUpdate.category).child(facultyIfUpdate.key).updateChildren(data)
-                .addOnSuccessListener {
-                    dialog.hideProgressDialog()
-                    toast(getString(R.string.faculty_updated_successfully))
-                    finish()
-                }.addOnFailureListener {
-                    dialog.hideProgressDialog()
-                    toast(getString(R.string.something_went_wrong))
-                }
+    }
+
+    private fun updateFacultyToDB(name: String, email: String, post: String) {
+        val dbReference =
+            databaseReference.child(facultyIfUpdate.category).child(facultyIfUpdate.key)
+        val data: HashMap<String, Any> = HashMap()
+        data["name"] = name
+        data["email"] = email
+        data["post"] = post
+        if (bitmap == null) {
+            data["image"] = facultyIfUpdate.image
+        } else {
+            data["image"] = imageUrl
         }
+        dbReference.updateChildren(data)
+            .addOnSuccessListener {
+                dialog.hideProgressDialog()
+                toast(getString(R.string.faculty_updated_successfully))
+                finish()
+            }.addOnFailureListener {
+                dialog.hideProgressDialog()
+                toast(getString(R.string.something_went_wrong))
+            }
     }
 
     private fun isValid(name: String, email: String, post: String): Boolean {
@@ -171,7 +162,8 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
 
         dialog.showSpinner(
             resources.getStringArray(R.array.departments),
-            binding.spinnerTeacherDepartments){
+            binding.spinnerTeacherDepartments
+        ) {
             department = it
         }
     }
