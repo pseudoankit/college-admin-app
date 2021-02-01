@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityAddUpdateFacultyBinding
 import com.android.collegeadminapp.util.*
+import com.android.collegeadminapp.util.FireBaseConstants.FB_FACULTY
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -198,14 +199,13 @@ class AddUpdateFacultyActivity : AppCompatActivity() {
             binding.etFacultyPost.setText(facultyIfUpdate.post)
         }
 
-        databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_FACULTY)
-        storageReference = FirebaseStorage.getInstance().reference.child(RTDB_FACULTY)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_FACULTY)
+        storageReference = FirebaseStorage.getInstance().reference.child(FB_FACULTY)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
         private const val GALLERY_REQ_CODE = 1
-        const val RTDB_FACULTY = "Faculty"
         const val IS_ADD = "is_add"
         const val UPDATE_OBJ = "faculty"
     }

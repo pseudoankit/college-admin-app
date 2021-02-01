@@ -10,9 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityUpdateFacultyBinding
-import com.android.collegeadminapp.ui.faculty.AddUpdateFacultyActivity.Companion.RTDB_FACULTY
 import com.android.collegeadminapp.ui.faculty.AddUpdateFacultyActivity.Companion.IS_ADD
 import com.android.collegeadminapp.ui.faculty.AddUpdateFacultyActivity.Companion.UPDATE_OBJ
+import com.android.collegeadminapp.util.FireBaseConstants.FB_FACULTY
+import com.android.collegeadminapp.util.FireBaseConstants.FB_FACULTY_CSE
+import com.android.collegeadminapp.util.FireBaseConstants.FB_FACULTY_ECE
+import com.android.collegeadminapp.util.FireBaseConstants.FB_FACULTY_ME
 import com.android.collegeadminapp.util.hide
 import com.android.collegeadminapp.util.show
 import com.android.collegeadminapp.util.toast
@@ -43,16 +46,16 @@ class UpdateFacultyActivity : AppCompatActivity() {
     private fun rv() {
         //todo in single rv
         lifecycleScope.launch {
-            setRv(getString(R.string.cse), binding.rvDepartmentCS, binding.CSNoData)
-            setRv(getString(R.string.ece), binding.rvDepartmentECE, binding.ECENoData)
-            setRv(getString(R.string.mechanical), binding.rvDepartmentME, binding.MENoData)
+            setRv(FB_FACULTY_CSE, binding.rvDepartmentCS, binding.CSNoData)
+            setRv(FB_FACULTY_ECE, binding.rvDepartmentECE, binding.ECENoData)
+            setRv(FB_FACULTY_ME, binding.rvDepartmentME, binding.MENoData)
         }
     }
 
-    private suspend fun setRv(child: String, rv: RecyclerView, noData: View) {
+    private suspend fun setRv(department: String, rv: RecyclerView, noData: View) {
         var list: MutableList<Faculty>
         val adapter = FacultyAdapter()
-        val dbPath = databaseReference.child(child)
+        val dbPath = databaseReference.child(department)
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 list = mutableListOf()
@@ -92,6 +95,6 @@ class UpdateFacultyActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_FACULTY)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_FACULTY)
     }
 }

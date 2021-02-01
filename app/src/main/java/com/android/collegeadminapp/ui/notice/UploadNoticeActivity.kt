@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityUploadNoticeBinding
 import com.android.collegeadminapp.util.*
+import com.android.collegeadminapp.util.FireBaseConstants.FB_NOTICE
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -107,13 +108,12 @@ class UploadNoticeActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_CHILD_NOTICE)
-        storageReference = FirebaseStorage.getInstance().reference.child(FB_CHILD_NOTICE)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_NOTICE)
+        storageReference = FirebaseStorage.getInstance().reference.child(FB_NOTICE)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
         private const val GALLERY_REQ_CODE = 1
-        const val FB_CHILD_NOTICE = "Notice"
     }
 }

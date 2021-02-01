@@ -7,10 +7,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityDeleteNoticeBinding
-import com.android.collegeadminapp.util.confirmationAlertDialog
-import com.android.collegeadminapp.util.hide
-import com.android.collegeadminapp.util.show
-import com.android.collegeadminapp.util.toast
+import com.android.collegeadminapp.util.*
+import com.android.collegeadminapp.util.FireBaseConstants.FB_NOTICE
 import com.google.firebase.database.*
 
 class DeleteNoticeActivity : AppCompatActivity() {
@@ -80,7 +78,6 @@ class DeleteNoticeActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        databaseReference =
-            FirebaseDatabase.getInstance().reference.child(UploadNoticeActivity.FB_CHILD_NOTICE)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_NOTICE)
     }
 }

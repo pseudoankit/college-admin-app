@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityUploadImageBinding
 import com.android.collegeadminapp.util.*
+import com.android.collegeadminapp.util.FireBaseConstants.FB_GALLERY
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -118,14 +119,13 @@ class UploadImageActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_GALLERY)
-        storageReference = FirebaseStorage.getInstance().reference.child(RTDB_GALLERY)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_GALLERY)
+        storageReference = FirebaseStorage.getInstance().reference.child(FB_GALLERY)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
         private const val GALLERY_REQ_CODE = 1
-        private const val RTDB_GALLERY = "Gallery"
     }
 
 }

@@ -10,6 +10,9 @@ import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityUploadPdfBinding
 import com.android.collegeadminapp.util.*
+import com.android.collegeadminapp.util.FireBaseConstants.FB_PDF
+import com.android.collegeadminapp.util.FireBaseConstants.FB_PDF_TITLE
+import com.android.collegeadminapp.util.FireBaseConstants.FB_PDF_URL
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
@@ -77,8 +80,8 @@ class UploadPdfActivity : AppCompatActivity() {
     private suspend fun uploadPdfToRTDB(pdfUrl: String) {
         val uniqueKey = databaseReference.push().key
         val data: HashMap<String, String> = HashMap()
-        data[RTDB_PDF_TITLE] = pdfTitle
-        data[RTDB_PDF_URL] = pdfUrl
+        data[FB_PDF_TITLE] = pdfTitle
+        data[FB_PDF_URL] = pdfUrl
         databaseReference.child(uniqueKey!!).setValue(data)
             .addOnCompleteListener {
                 progressBar.hide()
@@ -112,15 +115,12 @@ class UploadPdfActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        databaseReference = FirebaseDatabase.getInstance().reference.child(RTDB_PDF)
-        storageReference = FirebaseStorage.getInstance().reference.child(RTDB_PDF)
+        databaseReference = FirebaseDatabase.getInstance().reference.child(FB_PDF)
+        storageReference = FirebaseStorage.getInstance().reference.child(FB_PDF)
         progressBar = this.progressBar(binding.linearLayout)
     }
 
     companion object {
-        private const val RTDB_PDF = "Pdf"
         private const val PDF_REQ_CODE = 1
-        private const val RTDB_PDF_TITLE = "title"
-        private const val RTDB_PDF_URL = "url"
     }
 }
