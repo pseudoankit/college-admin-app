@@ -3,7 +3,7 @@ package com.android.collegeadminapp.ui.faculty
 import android.content.Context
 import android.content.Intent
 import com.android.collegeadminapp.R
-import com.android.collegeadminapp.adapter.BaseRVAdapter
+import com.android.collegeadminapp.base.adapter.BaseRVAdapter
 import com.android.collegeadminapp.databinding.LayoutItemFacultyBinding
 import com.squareup.picasso.Picasso
 

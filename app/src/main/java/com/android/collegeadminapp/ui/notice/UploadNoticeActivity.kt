@@ -3,19 +3,31 @@ package com.android.collegeadminapp.ui.notice
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.android.collegeadminapp.R
 import com.android.collegeadminapp.databinding.ActivityUploadNoticeBinding
+import com.android.collegeadminapp.network.MyVolleySingleton
 import com.android.collegeadminapp.util.*
 import com.android.collegeadminapp.util.FireBaseConstants.FB_NOTICE
+import com.android.volley.AuthFailureError
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.Response.Listener
+import com.android.volley.Response.ErrorListener
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.JsonObjectRequest
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
+import org.json.JSONException
+import org.json.JSONObject
+
 
 class UploadNoticeActivity : AppCompatActivity() {
 
@@ -36,6 +48,42 @@ class UploadNoticeActivity : AppCompatActivity() {
 
         binding.btnUploadNotice.setOnClickListener { buttonUploadNotice() }
 
+    }
+
+    private fun createPushNotification(title: String, message: String) {
+        val notification = JSONObject()
+        try {
+            notification.put("to", "/topics/"+"notice")
+            val notificationBody = JSONObject().apply {
+                put("title", title)
+                put("body", message)
+            }
+            notification.put("notification", notificationBody)
+        } catch (e: JSONException) {
+            Log.e(TAG, "onCreate: " + e.message);
+        }
+
+        val request =object : JsonObjectRequest(Request.Method.POST, FCM_API, notification,
+            Listener {
+                fun onResponse(response: JSONObject) {
+                    Log.d(TAG, "onResponse: $response")
+                }
+            },
+            ErrorListener {
+                @Override
+                fun onErrorResponse(error: VolleyError) {
+                    Log.d(TAG, "onResponse: ${error.message}")
+                }
+            }){
+            @Throws(AuthFailureError::class)
+            override fun getHeaders() : Map<String, String>{
+                val params: MutableMap<String, String> = HashMap()
+                params["content-type"]="application/json"
+                params["authorization"]= serverKey
+                return params
+            }
+        }
+        MyVolleySingleton.getInstance(applicationContext)!!.addToRequestQueue(request)
     }
 
     private fun buttonUploadNotice() {
@@ -76,6 +124,7 @@ class UploadNoticeActivity : AppCompatActivity() {
 
         databaseReference.child(uniqueKey).setValue(noticeData)
             .addOnSuccessListener {
+                createPushNotification("College App!!",title)
                 dialog.hideProgressDialog()
                 toast(getString(R.string.uploaded_successfully))
                 finish()
@@ -101,5 +150,11 @@ class UploadNoticeActivity : AppCompatActivity() {
 
     companion object {
         private const val GALLERY_REQ_CODE = 1
+        private const val TAG = "UploadNoticeActivity"
+        private const val FCM_API = "https://fcm.googleapis.com/fcm/send"
+        private const val serverKey =
+            "key=AAAAYz8VzSc:APA91bFkzhTrswZ-M99GB1wUo-nv_gTTaJa8qnshMv_69_made_5IED9jL80n0vXurF54GYSk_VIMFmLTdjaZZwGREqnJUphWt9apHAlpnpGTfB2nyjZyuvI5oL37T1iDzzglBnPLgyR"
+        private const val contentType = "application/json"
+
     }
 }

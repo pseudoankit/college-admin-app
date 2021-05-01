@@ -1,9 +1,8 @@
 package com.android.collegeadminapp.ui.notice
 
 import com.android.collegeadminapp.R
-import com.android.collegeadminapp.adapter.BaseRVAdapter
+import com.android.collegeadminapp.base.adapter.BaseRVAdapter
 import com.android.collegeadminapp.databinding.LayoutItemNewsfeedBinding
-import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 import java.lang.Exception
 

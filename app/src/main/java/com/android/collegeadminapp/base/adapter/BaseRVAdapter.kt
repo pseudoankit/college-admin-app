@@ -1,4 +1,4 @@
-package com.android.collegeadminapp.adapter
+package com.android.collegeadminapp.base.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,20 +7,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class BaseNestedRVAdapter<T : Any, VB : ViewDataBinding> :
-    RecyclerView.Adapter<BaseNestedRVAdapter.Companion.BaseViewHolder<VB>>() {
+abstract class BaseRVAdapter<T : Any, VB : ViewDataBinding> :
+    RecyclerView.Adapter<BaseRVAdapter.Companion.BaseViewHolder<VB>>() {
 
-    var nestedList = mutableListOf<T>()
+    var list = mutableListOf<T>()
 
     fun addItems(items: List<T>) {
-        nestedList.clear()
-        this.nestedList = items as MutableList<T>
+        list.clear()
+        this.list = items as MutableList<T>
         notifyDataSetChanged()
     }
 
-    override fun getItemCount() = nestedList.size
+    override fun getItemCount() = list.size
 
-    var nestedListener: ((view: View, item: T, position: Int) -> Unit)? = null
+    var listener: ((view: View, item: T, position: Int) -> Unit)? = null
 
     abstract fun layout(): Int
 

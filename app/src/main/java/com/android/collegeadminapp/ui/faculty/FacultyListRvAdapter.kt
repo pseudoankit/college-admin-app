@@ -5,7 +5,7 @@ import android.widget.ProgressBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.collegeadminapp.R
-import com.android.collegeadminapp.adapter.BaseNestedRVAdapter
+import com.android.collegeadminapp.base.adapter.BaseNestedRVAdapter
 import com.android.collegeadminapp.databinding.LayoutItemRvListBinding
 import com.android.collegeadminapp.util.hide
 import com.android.collegeadminapp.util.show

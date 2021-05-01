@@ -13,6 +13,7 @@ import com.android.collegeadminapp.ui.faculty.UpdateFacultyActivity
 import com.android.collegeadminapp.ui.notice.DeleteNoticeActivity
 import com.android.collegeadminapp.ui.notice.UploadNoticeActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
 
